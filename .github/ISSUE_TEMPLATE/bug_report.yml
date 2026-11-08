@@ -1,0 +1,33 @@
+name: Bug report
+description: Create a report to help us improve git-oops
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting a bug! Please ensure this is not a security vulnerability (report those privately via SECURITY.md).
+  - type: input
+    id: environment
+    attributes:
+      label: Python & OS Environment
+      description: e.g. Python 3.11 on Windows / Ubuntu
+      placeholder: Python 3.11, Ubuntu 22.04
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What unexpected behavior did you see?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps or commands to reproduce the issue.
+      placeholder: |
+        1. Run `python -m src.cli --file broken.py --error "..."`
+        2. See error
+    validations:
+      required: true
