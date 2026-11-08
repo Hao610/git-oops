@@ -10,6 +10,15 @@ Usage:
 import sys
 import os
 import argparse
+
+# Ensure standard UTF-8 output on Windows consoles to prevent cp1252 charmap crashes
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from src.circuit_breaker import get_daily_spend
 from src.engine import diagnose_and_patch, apply_patch_to_file
 
