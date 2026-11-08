@@ -21,11 +21,11 @@
 
 ## 😤 Why git-oops?
 
-Every developer knows the Friday 11:30 PM ritual:
+We've all been there right before a project deadline or hackathon submission:
 1. Your script crashes with a 50-line Python or Node stack trace.
-2. You copy-paste it into ChatGPT.
+2. You copy-paste it into ChatGPT hoping for a quick fix.
 3. You get a polite, rambling 6-paragraph essay starting with *"I'd be glad to help! The issue appears to be..."* just to find 2 changed lines of code buried at the bottom.
-4. You hook up a local AI agent to fix it, hit a recursive retry loop, and wake up to a **$140 surprise API bill**.
+4. You hook up a local script or agent to auto-retry, hit a recursive exception loop, and get hit with a **surprise cloud API bill**.
 
 **`git-oops` replaces that entire mess with a single terminal command:**
 
@@ -43,7 +43,7 @@ git-oops --file broken.py --error "KeyError: 'user_id'"
 💀 THE ROAST:
 "Congratulations! You treated an optional dictionary key like it was guaranteed 
 by the Geneva Conventions, and now you act shocked when Python slaps you with a KeyError. 
-Classic Friday-at-5PM code."
+Classic deadline-panic code."
 
 🔍 ROOT CAUSE: Unchecked dictionary subscription without .get() or defensive guard.
 💰 COST INCURRED: $0.00012 (Total today: $0.0034)
