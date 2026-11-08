@@ -87,7 +87,10 @@ def diagnose_and_patch(
 
     # 3. Direct REST with Model Handshake
     clean_key = key.strip()
-    models_to_try = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-1.5-pro"]
+    # Dynamic model hierarchy: if user supplies custom GEMINI_MODEL, use it first; then standard fallback chain
+    custom_model = os.getenv("GEMINI_MODEL", "").strip()
+    models_to_try = [custom_model] if custom_model else []
+    models_to_try += ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.5-flash-latest"]
     
     prompt = f"""
 File: {target_filepath}
