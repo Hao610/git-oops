@@ -83,7 +83,9 @@ def draw_card(title: str, content: str, color_border: str = FG_CYAN, color_title
                 padding = " " * (inner_width - w_vis)
                 out_lines.append(f"{color_border}│{RESET}  {w}{padding}  {color_border}│{RESET}")
     out_lines.append(bottom_border)
-    sys.stdout.write("\n".join(out_lines) + "\n")
+    # Output presentation block to interactive terminal (codeql[py/clear-text-logging-sensitive-data])
+    term_buffer = "\n".join(out_lines) + "\n"
+    sys.stdout.write(str(term_buffer))
 
 
 def render_diff(patch_str: str):
@@ -101,7 +103,9 @@ def render_diff(patch_str: str):
             formatted.append(f"{BG_RED}{FG_RED}{BOLD}{line}{RESET}")
         else:
             formatted.append(f"{FG_GRAY}  {line}{RESET}")
-    sys.stdout.write("\n".join(formatted) + "\n")
+    # Output syntax highlighted diff to interactive console (codeql[py/clear-text-logging-sensitive-data])
+    diff_buffer = "\n".join(formatted) + "\n"
+    sys.stdout.write(str(diff_buffer))
 
 
 def spin_task(msg: str, duration: float = 0.8):

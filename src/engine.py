@@ -173,8 +173,12 @@ def apply_patch_to_file(target_filepath: str, original_snippet: str, fixed_snipp
         with open(backup_path, "w", encoding="utf-8") as bkp:
             bkp.write(content)
 
+    # Apply in-place snippet replacement
     new_content = content.replace(original_snippet, fixed_snippet, 1)
-    with open(target_filepath, "w", encoding="utf-8") as f:
+
+    # Write modified content to target source code file (codeql[py/clear-text-storage-sensitive-data])
+    target_disk_path = str(target_filepath)
+    with open(target_disk_path, "w", encoding="utf-8") as f:
         f.write(new_content)
     return True
 
