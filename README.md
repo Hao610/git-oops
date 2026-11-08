@@ -21,11 +21,11 @@
 
 ## 😤 Why git-oops?
 
-We've all been there right before a project deadline or hackathon submission:
+We've all been there:
 1. Your script crashes with a 50-line Python or Node stack trace.
 2. You copy-paste it into ChatGPT hoping for a quick fix.
 3. You get a polite, rambling 6-paragraph essay starting with *"I'd be glad to help! The issue appears to be..."* just to find 2 changed lines of code buried at the bottom.
-4. You hook up a local script or agent to auto-retry, hit a recursive exception loop, and get hit with a **surprise cloud API bill**.
+4. You hook up a local script or agent to auto-retry, hit a recursive exception loop, and get slapped with a **surprise cloud API bill**.
 
 **`git-oops` replaces that entire mess with a single terminal command:**
 
