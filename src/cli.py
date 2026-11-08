@@ -22,16 +22,22 @@ if sys.platform == "win32":
 
 from src.circuit_breaker import get_daily_spend, get_default_config, set_config_value
 from src.engine import diagnose_and_patch, apply_patch_to_file, rollback_file
-
-# ANSI styling
-BOLD = "\033[1m"
-RED = "\033[91m"
-GREEN = "\033[92m"
-YELLOW = "\033[93m"
-BLUE = "\033[94m"
-MAGENTA = "\033[95m"
-CYAN = "\033[96m"
-RESET = "\033[0m"
+from src.ui import (
+    print_banner,
+    draw_card,
+    render_diff,
+    spin_task,
+    FG_CYAN,
+    FG_MAGENTA,
+    FG_YELLOW,
+    FG_GREEN,
+    FG_RED,
+    FG_WHITE,
+    FG_GRAY,
+    BOLD,
+    ITALIC,
+    RESET
+)
 
 
 def main():
@@ -57,29 +63,47 @@ def main():
     # Save permanent config
     if args.set_personality:
         set_config_value("personality", args.set_personality)
-        print(f"\n{GREEN}✅ Default persona permanently saved as '{args.set_personality}'!{RESET}\n")
+        print_banner()
+        draw_card(
+            "CONFIGURATION SAVED",
+            f"Default persona updated to: {FG_YELLOW}{BOLD}{args.set_personality}{RESET}\nAll future crashes will be roasted in this style.",
+            color_border=FG_GREEN,
+            color_title=FG_GREEN
+        )
         return
 
     if args.set_budget is not None:
         set_config_value("daily_budget", args.set_budget)
-        print(f"\n{GREEN}✅ Default daily budget permanently saved as ${args.set_budget:.2f} USD!{RESET}\n")
+        print_banner()
+        draw_card(
+            "CIRCUIT BREAKER UPDATED",
+            f"Daily spending limit hard-capped at: {FG_GREEN}{BOLD}${args.set_budget:.2f} USD{RESET}\nRequests will automatically abort if spend exceeds this threshold.",
+            color_border=FG_GREEN,
+            color_title=FG_GREEN
+        )
         return
 
     # Budget status check
     if args.status:
         spent = get_daily_spend()
-        print(f"\n{BOLD}{CYAN}🛡️  [GIT-OOPS CIRCUIT BREAKER STATUS]{RESET}")
-        print(f"Today's Accumulated Spend : {GREEN}${spent:.5f} USD{RESET}")
-        print(f"Safety Threshold          : {YELLOW}${args.budget:.2f} USD{RESET}\n")
+        print_banner()
+        status_text = (
+            f"Accumulated Spend Today : {FG_GREEN}{BOLD}${spent:.5f} USD{RESET}\n"
+            f"Daily Safety Ceiling    : {FG_YELLOW}{BOLD}${args.budget:.2f} USD{RESET}\n"
+            f"Remaining Budget Safe   : {FG_CYAN}{BOLD}${max(0.0, args.budget - spent):.5f} USD{RESET}\n"
+            f"Active Roast Persona    : {FG_MAGENTA}{BOLD}{args.personality}{RESET}"
+        )
+        draw_card("CIRCUIT BREAKER METRICS", status_text, color_border=FG_CYAN, color_title=FG_WHITE)
         return
 
     # Undo / Rollback
     if args.undo:
         success = rollback_file(args.undo)
+        print_banner()
         if success:
-            print(f"\n{GREEN}⏪ [ROLLBACK SUCCESS] Restored '{args.undo}' from previous backup.{RESET}\n")
+            draw_card("SAFETY ROLLBACK", f"Successfully restored {BOLD}'{args.undo}'{RESET} from its previous backup snapshot.\nOriginal code state reinstated.", color_border=FG_GREEN, color_title=FG_GREEN)
         else:
-            print(f"\n{RED}❌ [ROLLBACK FAILED] No backup found for '{args.undo}' (expected '{args.undo}.oops.bak').{RESET}\n")
+            draw_card("ROLLBACK FAILED", f"No safety backup found for {BOLD}'{args.undo}'{RESET}.\nExpected snapshot: '{args.undo}.oops.bak'", color_border=FG_RED, color_title=FG_RED)
         return
 
     # Auto-run execution
@@ -124,13 +148,15 @@ def main():
 
     filepath = args.file
     if not os.path.exists(filepath):
-        print(f"{RED}Error: File '{filepath}' not found.{RESET}")
+        print(f"{FG_RED}Error: File '{filepath}' not found.{RESET}")
         return
 
     with open(filepath, "r", encoding="utf-8") as f:
         file_content = f.read()
 
-    print(f"\n{BOLD}{MAGENTA}⚡ [GIT-OOPS] Analyzing crash & invoking staff-level critic...{RESET}")
+    print_banner()
+    spin_task("Analyzing stack trace & scanning codebase boundaries...", duration=0.6)
+    spin_task(f"Invoking critic persona '{args.personality.upper()}'...", duration=0.5)
     
     try:
         diagnosis = diagnose_and_patch(
@@ -141,46 +167,51 @@ def main():
             budget_limit_usd=args.budget
         )
     except PermissionError as pe:
-        print(f"\n{RED}{BOLD}{pe}{RESET}\n")
+        draw_card("CIRCUIT BREAKER TRIGGERED", str(pe), color_border=FG_RED, color_title=FG_RED)
         return
     except Exception as ex:
-        print(f"\n{RED}Diagnostic failed: {ex}{RESET}\n")
+        draw_card("DIAGNOSTIC ERROR", str(ex), color_border=FG_RED, color_title=FG_RED)
         return
 
-    # Print Brutal Roast
-    print(f"\n{BOLD}{RED}💀 THE ROAST:{RESET}")
-    print(f"{YELLOW}\"{diagnosis['roast']}\"{RESET}\n")
+    # Print Brutal Roast Card
+    persona_title = f"CRITIC ROAST ({args.personality.upper()})"
+    draw_card(persona_title, f"{FG_YELLOW}{ITALIC}\"{diagnosis['roast']}\"{RESET}", color_border=FG_MAGENTA, color_title=FG_MAGENTA)
 
-    print(f"{BOLD}{CYAN}🔍 ROOT CAUSE:{RESET} {diagnosis['root_cause']}")
-    
-    # Financial metrics
-    cost_str = f"${diagnosis.get('cost_usd', 0.0):.5f}" if not diagnosis.get("is_cached") else "FREE (Cache Hit)"
-    print(f"{BOLD}💰 COST INCURRED:{RESET} {GREEN}{cost_str}{RESET} (Total today: ${get_daily_spend():.4f})")
+    # Diagnostic metadata card
+    cost_str = f"${diagnosis.get('cost_usd', 0.0):.5f} USD" if not diagnosis.get("is_cached") else "FREE (Deterministic Cache Hit)"
+    meta_text = (
+        f"Root Cause   : {BOLD}{diagnosis['root_cause']}{RESET}\n"
+        f"Target File  : {FG_CYAN}{filepath}{RESET}\n"
+        f"Query Cost   : {FG_GREEN}{cost_str}{RESET}  │  Today's Total: ${get_daily_spend():.4f} USD\n"
+        f"Safety Check : {FG_GREEN}Circuit Breaker Passed (Limit: ${args.budget:.2f}){RESET}"
+    )
+    draw_card("DIAGNOSTIC ANALYSIS & FINANCIAL METRICS", meta_text, color_border=FG_CYAN, color_title=FG_CYAN)
 
     # Show Diff
-    print(f"\n{BOLD}{GREEN}📝 PROPOSED GIT PATCH:{RESET}")
+    print(f"\n{BOLD}{FG_WHITE}PROPOSED SURGICAL GIT PATCH:{RESET}\n")
     patch_str = str(diagnosis.get("git_patch", ""))
-    print(f"```diff\n{patch_str}\n```\n")
+    render_diff(patch_str)
+    print("")
 
     # Apply Prompt
     if args.yes:
         applied = apply_patch_to_file(filepath, diagnosis['original_snippet'], diagnosis['fixed_snippet'])
         if applied:
-            print(f"{GREEN}✅ Patch successfully written to {filepath}!{RESET}")
-            print(f"{BLUE}💡 (Tip: run `git-oops --undo {filepath}` anytime if you want to revert){RESET}\n")
+            draw_card("PATCH APPLIED SUCCESSFULLY", f"File '{filepath}' updated safely.\nRun `git-oops --undo {filepath}` if you wish to roll back.", color_border=FG_GREEN, color_title=FG_GREEN)
         else:
-            print(f"{YELLOW}⚠️ Could not auto-apply: snippet did not match cleanly.{RESET}\n")
+            draw_card("PATCH APPLICATION FAILED", "Original snippet did not match cleanly.", color_border=FG_RED, color_title=FG_RED)
     else:
-        user_input = input(f"{BOLD}Apply this patch to '{filepath}' right now? [y/N]: {RESET}").strip().lower()
+        user_input = input(f" {FG_YELLOW}{BOLD}?{RESET} {BOLD}Apply this patch to '{filepath}' right now? [y/N]: {RESET}").strip().lower()
         if user_input in ["y", "yes"]:
             applied = apply_patch_to_file(filepath, diagnosis['original_snippet'], diagnosis['fixed_snippet'])
             if applied:
-                print(f"\n{GREEN}✅ Patch applied! Run your script again.{RESET}")
-                print(f"{BLUE}💡 (Tip: run `git-oops --undo {filepath}` anytime if you want to revert){RESET}\n")
+                print("")
+                draw_card("PATCH APPLIED SUCCESSFULLY", f"File '{filepath}' updated safely.\nRun `git-oops --undo {filepath}` if you wish to roll back.", color_border=FG_GREEN, color_title=FG_GREEN)
             else:
-                print(f"\n{YELLOW}⚠️ Patch not applied: Original snippet could not be matched.{RESET}\n")
+                print("")
+                draw_card("PATCH APPLICATION FAILED", "Original snippet could not be matched cleanly in file.", color_border=FG_RED, color_title=FG_RED)
         else:
-            print(f"\n{BLUE}Aborted. No files were modified.{RESET}\n")
+            print(f"\n {FG_GRAY}Aborted. No files were modified.{RESET}\n")
 
 
 if __name__ == "__main__":
