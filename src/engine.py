@@ -160,10 +160,18 @@ def apply_patch_to_file(target_filepath: str, original_snippet: str, fixed_snipp
         else:
             return False
     
-    # Create backup for rollback support
+    # Create backup snapshot for rollback support with strict file permissions
     backup_path = f"{target_filepath}.oops.bak"
-    with open(backup_path, "w", encoding="utf-8") as bkp:
-        bkp.write(content)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    mode = 0o600  # Restrict read/write to owner only (mitigates CodeQL clear-text storage alert)
+    try:
+        fd = os.open(backup_path, flags, mode)
+        with os.fdopen(fd, "w", encoding="utf-8") as bkp:
+            bkp.write(content)
+    except Exception:
+        # Fallback for systems without POSIX permissions
+        with open(backup_path, "w", encoding="utf-8") as bkp:
+            bkp.write(content)
 
     new_content = content.replace(original_snippet, fixed_snippet, 1)
     with open(target_filepath, "w", encoding="utf-8") as f:

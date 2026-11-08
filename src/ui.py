@@ -66,14 +66,14 @@ def draw_card(title: str, content: str, color_border: str = FG_CYAN, color_title
     top_border = f"{color_border}╭─ {color_title}{BOLD}{title}{RESET} {color_border}{'─' * dashes_len}╮{RESET}"
     bottom_border = f"{color_border}╰{'─' * (box_width - 2)}╯{RESET}"
 
-    print(top_border)
-    for raw_line in content.splitlines():
+    out_lines = [top_border]
+    for raw_line in str(content).splitlines():
         # Strip trailing return chars
         raw_line = raw_line.rstrip()
         vis_len = len(strip_ansi(raw_line))
         if vis_len <= inner_width:
             padding = " " * (inner_width - vis_len)
-            print(f"{color_border}│{RESET}  {raw_line}{padding}  {color_border}│{RESET}")
+            out_lines.append(f"{color_border}│{RESET}  {raw_line}{padding}  {color_border}│{RESET}")
         else:
             # Word-wrap preserving styles
             plain_line = strip_ansi(raw_line)
@@ -81,24 +81,27 @@ def draw_card(title: str, content: str, color_border: str = FG_CYAN, color_title
             for w in wrapped:
                 w_vis = len(strip_ansi(w))
                 padding = " " * (inner_width - w_vis)
-                print(f"{color_border}│{RESET}  {w}{padding}  {color_border}│{RESET}")
-    print(bottom_border)
+                out_lines.append(f"{color_border}│{RESET}  {w}{padding}  {color_border}│{RESET}")
+    out_lines.append(bottom_border)
+    sys.stdout.write("\n".join(out_lines) + "\n")
 
 
 def render_diff(patch_str: str):
     """Renders GitHub/GitLab-style colored unified diff."""
-    lines = patch_str.strip().splitlines()
+    formatted = []
+    lines = str(patch_str).strip().splitlines()
     for line in lines:
         if line.startswith("---") or line.startswith("+++"):
-            print(f"{BOLD}{FG_GRAY}{line}{RESET}")
+            formatted.append(f"{BOLD}{FG_GRAY}{line}{RESET}")
         elif line.startswith("@@"):
-            print(f"{FG_CYAN}{BOLD}{line}{RESET}")
+            formatted.append(f"{FG_CYAN}{BOLD}{line}{RESET}")
         elif line.startswith("+"):
-            print(f"{BG_GREEN}{FG_GREEN}{BOLD}{line}{RESET}")
+            formatted.append(f"{BG_GREEN}{FG_GREEN}{BOLD}{line}{RESET}")
         elif line.startswith("-"):
-            print(f"{BG_RED}{FG_RED}{BOLD}{line}{RESET}")
+            formatted.append(f"{BG_RED}{FG_RED}{BOLD}{line}{RESET}")
         else:
-            print(f"{FG_GRAY}  {line}{RESET}")
+            formatted.append(f"{FG_GRAY}  {line}{RESET}")
+    sys.stdout.write("\n".join(formatted) + "\n")
 
 
 def spin_task(msg: str, duration: float = 0.8):
