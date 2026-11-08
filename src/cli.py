@@ -93,7 +93,8 @@ def main():
 
     # Show Diff
     print(f"\n{BOLD}{GREEN}📝 PROPOSED GIT PATCH:{RESET}")
-    print(f"```diff\n{diagnosis.get('git_patch', '')}\n```\n")
+    patch_str = str(diagnosis.get("git_patch", ""))
+    print(f"```diff\n{patch_str}\n```\n")
 
     # Apply Prompt
     if args.yes:
