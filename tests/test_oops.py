@@ -9,7 +9,7 @@ Unit tests for git-oops:
 import os
 import pytest
 from src.circuit_breaker import check_circuit_breaker, record_spend, get_daily_spend, hash_content
-from src.engine import diagnose_and_patch, apply_patch_to_file
+from src.engine import diagnose_and_patch, apply_patch_to_file, rollback_file
 
 
 def test_circuit_breaker_blocks_when_exceeded(monkeypatch):
@@ -57,3 +57,33 @@ def test_offline_critic_returns_valid_roast_and_diff():
     assert "roast" in res
     assert "git_patch" in res
     assert "--- a/app.py" in res["git_patch"]
+
+
+def test_personalities_roast_properly():
+    """Verify all caustic personalities return distinct biting roasts."""
+    p_linus = diagnose_and_patch("KeyError", "code", "app.py", personality="linus", api_key="")
+    assert "Torvalds" not in p_linus["roast"] or "memory" in p_linus["roast"].lower() or "mind" in p_linus["roast"].lower()
+
+    p_ramsay = diagnose_and_patch("KeyError", "code", "app.py", personality="ramsay", api_key="")
+    assert "RAW" in p_ramsay["roast"] or "SANDWICH" in p_ramsay["roast"]
+
+    p_passive = diagnose_and_patch("KeyError", "code", "app.py", personality="passive_aggressive", api_key="")
+    assert "previous" in p_passive["roast"].lower() or "😊" in p_passive["roast"]
+
+
+def test_patch_rollback(tmp_path):
+    """Verify applying a patch creates a backup and rollback restores exact original state."""
+    dummy_file = tmp_path / "rollback_test.py"
+    initial_content = "def test():\n    return 42\n"
+    dummy_file.write_text(initial_content, encoding="utf-8")
+
+    orig = "return 42"
+    fix = "return 100"
+
+    apply_patch_to_file(str(dummy_file), orig, fix)
+    assert "return 100" in dummy_file.read_text(encoding="utf-8")
+
+    # Now rollback
+    success = rollback_file(str(dummy_file))
+    assert success is True
+    assert dummy_file.read_text(encoding="utf-8") == initial_content

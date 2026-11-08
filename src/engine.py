@@ -17,27 +17,44 @@ from src.circuit_breaker import (
     hash_content
 )
 
-SYSTEM_PROMPT = """You are 'git-oops', a brutally honest, world-class staff software engineer and code reviewer.
-The developer has run into a crash/stack trace, or submitted code with hidden architectural disasters.
+PERSONALITY_PROMPTS = {
+    "staff": """You are a cynical, overworked Principal/Staff Software Engineer who has seen too much bad code.
+Tone: Cold, brutally direct, technical, deeply disappointed. Sarcastic observations about architecture and lack of discipline.""",
+    
+    "linus": """You are Linus Torvalds reviewing a kernel mailing list pull request.
+Tone: Volatile, furious, zero tolerance for stupidity. You treat this bug as a personal insult to computing history. Use phrases like 'Garbage', 'Brain-damaged', 'What were you thinking?!'""",
+    
+    "ramsay": """You are Chef Gordon Ramsay in Hell's Kitchen, inspecting code like raw rotting chicken.
+Tone: Screaming, unhinged, creative culinary insults. 'This code is so raw it's still running in the pasture!', 'Idiot sandwich!', 'WAKE UP!'""",
+    
+    "passive_aggressive": """You are a toxic corporate passive-aggressive senior coworker on Slack.
+Tone: Dripping with fake politeness, condescending corporate speak, veiled threats, and extreme snark. 'Per my previous 15 code reviews...', 'Interesting architectural choice, hope you enjoy on-call duty tonight 😊'"""
+}
 
-YOUR PERSONALITY:
-- Witty, sarcastic, brutally direct, but technically unassailable.
-- Call out bad practices (e.g. unhandled NoneType, swallowed exceptions, N+1 queries, plaintext secrets, memory leaks).
-- Never say "I hope this helps". Be concise and punchy.
 
-YOUR TASK:
-Analyze the provided code and error traceback, diagnose the root cause, and generate an exact, valid unified diff git patch.
+def get_system_prompt(personality: str = "staff") -> str:
+    persona_desc = PERSONALITY_PROMPTS.get(personality.lower(), PERSONALITY_PROMPTS["staff"])
+    return f"""You are 'git-oops', an AI code reviewer and crash diagnostic engine.
+The developer encountered a crash/traceback.
+
+YOUR ROAST PERSONA:
+{persona_desc}
+
+RULES:
+- Absolutely NO encouragement. No polite filler like 'Hope this helps'.
+- The roast must be vicious, witty, and directly target the root technical cause of the error.
+- Output strictly valid JSON.
 
 OUTPUT FORMAT REQUIREMENTS:
 You MUST respond with valid JSON matching this schema:
-{
-  "roast": "<2-3 sentence brutal and witty technical teardown of the mistake>",
+{{
+  "roast": "<2-3 sentence brutal and witty roast in your chosen persona>",
   "root_cause": "<1 crisp sentence explaining why it broke>",
   "target_file": "<relative path of the file needing fix, e.g. src/app.py>",
   "original_snippet": "<exact original lines of code that need replacement>",
   "fixed_snippet": "<exact replacement code fixing the bug>",
   "git_patch": "<complete unified git diff block starting with '--- a/...' and '+++ b/...'>"
-}
+}}
 """
 
 
@@ -45,6 +62,7 @@ def diagnose_and_patch(
     error_log: str,
     file_context: str,
     target_filepath: str,
+    personality: str = "staff",
     api_key: Optional[str] = None,
     budget_limit_usd: float = 1.0
 ) -> Dict[str, Any]:
@@ -55,13 +73,13 @@ def diagnose_and_patch(
     key = api_key or os.getenv("GEMINI_API_KEY", "")
     if not key or not key.strip():
         # Clean offline simulation when key not provided
-        return _offline_diagnostic(error_log, target_filepath, file_context)
+        return _offline_diagnostic(error_log, target_filepath, file_context, personality=personality)
 
     # 1. Check Circuit Breaker
     check_circuit_breaker(spend_limit_usd=budget_limit_usd)
 
     # 2. Check Local SHA256 Cache (Free Instant Hit)
-    cache_key = hash_content(f"{target_filepath}::{error_log}::{file_context}")
+    cache_key = hash_content(f"{personality}::{target_filepath}::{error_log}::{file_context}")
     cached = get_cached_response(cache_key)
     if cached:
         cached["is_cached"] = True
@@ -80,12 +98,13 @@ Source Code Context:
 {file_context}
 """
 
+    system_inst = get_system_prompt(personality)
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "systemInstruction": {"parts": [{"text": system_inst}]},
         "generationConfig": {
             "responseMimeType": "application/json",
-            "temperature": 0.2
+            "temperature": 0.4
         }
     }
 
@@ -120,7 +139,7 @@ Source Code Context:
 
 
 def apply_patch_to_file(target_filepath: str, original_snippet: str, fixed_snippet: str) -> bool:
-    """Safely applies the replacement snippet to the targeted local file."""
+    """Safely applies the replacement snippet to the targeted local file and creates a backup."""
     if not os.path.exists(target_filepath):
         raise FileNotFoundError(f"File '{target_filepath}' does not exist.")
     
@@ -131,16 +150,45 @@ def apply_patch_to_file(target_filepath: str, original_snippet: str, fixed_snipp
         # Fallback: line-by-line whitespace-tolerant match
         return False
     
+    # Create backup for rollback support
+    backup_path = f"{target_filepath}.oops.bak"
+    with open(backup_path, "w", encoding="utf-8") as bkp:
+        bkp.write(content)
+
     new_content = content.replace(original_snippet, fixed_snippet, 1)
     with open(target_filepath, "w", encoding="utf-8") as f:
         f.write(new_content)
     return True
 
 
-def _offline_diagnostic(error_log: str, filepath: str, context: str) -> Dict[str, Any]:
+def rollback_file(target_filepath: str) -> bool:
+    """Restores a file from its .oops.bak backup."""
+    backup_path = f"{target_filepath}.oops.bak"
+    if not os.path.exists(backup_path):
+        return False
+    
+    with open(backup_path, "r", encoding="utf-8") as bkp:
+        original_content = bkp.read()
+    
+    with open(target_filepath, "w", encoding="utf-8") as f:
+        f.write(original_content)
+    
+    os.remove(backup_path)
+    return True
+
+
+def _offline_diagnostic(error_log: str, filepath: str, context: str, personality: str = "staff") -> Dict[str, Any]:
     """Deterministic offline engine when running in demo/air-gapped mode."""
+    roasts = {
+        "staff": "Congratulations! You treated an optional dictionary key like it was guaranteed to exist, then acted shocked when Python slapped you with a KeyError. Classic Friday-at-5PM code.",
+        "linus": "Are you out of your mind?! Accessing an unvalidated map key directly? This isn't just a bug, it's an insult to memory management and everyone who taught you computer science.",
+        "ramsay": "LOOK AT THIS KEYERROR! IT'S RAW! A five-year-old child could write safer dictionary access than this pathetic excuse for code! IDIOT SANDWICH!",
+        "passive_aggressive": "Per my previous 15 code reviews, dictionaries can be empty. But clearly writing defensive code was too much effort today. Hope you have fun debugging in production at 3 AM! 😊"
+    }
+    roast_text = roasts.get(personality.lower(), roasts["staff"])
+
     return {
-        "roast": "Congratulations! You treated an optional dictionary key like it was guaranteed to exist, then acted shocked when Python slapped you with a KeyError. Classic Friday-at-5PM code.",
+        "roast": roast_text,
         "root_cause": "Unchecked dictionary subscription without .get() or defensive guard.",
         "target_file": filepath,
         "original_snippet": "user_id = payload['user_id']",
@@ -148,5 +196,5 @@ def _offline_diagnostic(error_log: str, filepath: str, context: str) -> Dict[str
         "git_patch": f"--- a/{filepath}\n+++ b/{filepath}\n@@ -10,1 +10,3 @@\n-user_id = payload['user_id']\n+user_id = payload.get('user_id')\n+if not user_id:\n+    raise ValueError('Missing required user_id')",
         "cost_usd": 0.0,
         "is_cached": False,
-        "model_used": "offline-critic"
+        "model_used": f"offline-{personality}"
     }

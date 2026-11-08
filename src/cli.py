@@ -10,6 +10,7 @@ Usage:
 import sys
 import os
 import argparse
+import subprocess
 
 # Ensure standard UTF-8 output on Windows consoles to prevent cp1252 charmap crashes
 if sys.platform == "win32":
@@ -20,7 +21,7 @@ if sys.platform == "win32":
         pass
 
 from src.circuit_breaker import get_daily_spend
-from src.engine import diagnose_and_patch, apply_patch_to_file
+from src.engine import diagnose_and_patch, apply_patch_to_file, rollback_file
 
 # ANSI styling
 BOLD = "\033[1m"
@@ -41,7 +42,10 @@ def main():
     parser.add_argument("-f", "--file", help="Path to the file that crashed", default=None)
     parser.add_argument("-e", "--error", help="Error message or traceback string", default=None)
     parser.add_argument("-b", "--budget", help="Daily API spend ceiling in USD (default: $1.00)", type=float, default=1.0)
+    parser.add_argument("-p", "--personality", help="Roast persona: 'staff', 'linus', 'ramsay', or 'passive_aggressive'", default="staff", choices=["staff", "linus", "ramsay", "passive_aggressive"])
     parser.add_argument("-y", "--yes", help="Auto-apply patch without interactive prompt", action="store_true")
+    parser.add_argument("--undo", help="Roll back the last applied patch on target file", default=None)
+    parser.add_argument("--run", help="Execute a command and auto-catch its crash (e.g. --run 'python app.py')", default=None)
     parser.add_argument("--status", help="Show today's accumulated API spend", action="store_true")
 
     args = parser.parse_args()
@@ -53,6 +57,43 @@ def main():
         print(f"Today's Accumulated Spend : {GREEN}${spent:.5f} USD{RESET}")
         print(f"Safety Threshold          : {YELLOW}${args.budget:.2f} USD{RESET}\n")
         return
+
+    # Undo / Rollback
+    if args.undo:
+        success = rollback_file(args.undo)
+        if success:
+            print(f"\n{GREEN}⏪ [ROLLBACK SUCCESS] Restored '{args.undo}' from previous backup.{RESET}\n")
+        else:
+            print(f"\n{RED}❌ [ROLLBACK FAILED] No backup found for '{args.undo}' (expected '{args.undo}.oops.bak').{RESET}\n")
+        return
+
+    # Auto-run execution
+    if args.run:
+        print(f"\n{BOLD}{CYAN}🚀 [GIT-OOPS RUNNER] Executing: {args.run}{RESET}\n")
+        proc = subprocess.run(args.run, shell=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if proc.returncode == 0:
+            print(proc.stdout)
+            print(f"{GREEN}✨ Command executed successfully without errors!{RESET}\n")
+            return
+        
+        # Captured an error
+        err_output = (proc.stderr or "") + "\n" + (proc.stdout or "")
+        print(f"{RED}💥 Crash detected! (Exit code {proc.returncode}){RESET}")
+        
+        # If user didn't specify file, try to extract it from traceback
+        if not args.file:
+            import re
+            file_matches = re.findall(r'File "([^"]+)", line \d+', err_output)
+            if file_matches:
+                # pick the last local file mentioned
+                for cand in reversed(file_matches):
+                    if os.path.exists(cand):
+                        args.file = cand
+                        break
+        
+        args.error = err_output.strip()
+        if not args.file:
+            print(f"{YELLOW}Could not automatically determine crashed file. Please provide --file.{RESET}")
 
     # Check inputs
     if not args.file or not args.error:
@@ -81,6 +122,7 @@ def main():
             error_log=args.error,
             file_context=file_content,
             target_filepath=filepath,
+            personality=args.personality,
             budget_limit_usd=args.budget
         )
     except PermissionError as pe:

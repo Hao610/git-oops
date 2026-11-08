@@ -88,10 +88,54 @@ Apply this patch to 'broken.py' right now? [y/N]: y
 
 | Feature | What It Does | Why It Matters |
 | :--- | :--- | :--- |
-| 💀 **Brutal Staff Roast** | Delivers witty, unapologetic technical teardowns of bad habits. | No polite filler. Forces you to learn proper architectural patterns. |
+| 💀 **Zero-Mercy Roasts** | Multiple caustic personas (`staff`, `linus`, `ramsay`, `passive_aggressive`). | Zero polite filler. Forces you to learn proper architectural discipline. |
 | 📝 **1-Click Surgical Patch** | Generates an exact unified git diff and applies it on `[y]`. | No browser switching. Preserves comments, imports, and indentation. |
+| ⏪ **Instant Safety Undo** | Auto-backs up files before modification (`--undo file.py`). | Complete peace of mind: 1-second instant rollback if you change your mind. |
+| 🚀 **Auto-Run Crash Catcher** | Run any command via `--run "python app.py"` to catch crashes live. | No need to copy-paste tracebacks or switch windows. |
 | 🛡️ **Budget Circuit Breaker** | Hard-caps daily API spending at a configurable threshold (e.g. $1.00). | Physically impossible to get slapped with runaway $500 agent bills. |
 | ⚡ **Deterministic Cache** | Caches responses by code + error SHA-256 hash in `~/.git_oops/`. | Re-running crashes during debugging costs $0.00 and runs offline. |
+
+---
+
+## 🎭 Choose Your Roast Persona (`--personality`)
+
+Choose how painfully you want your bugs delivered:
+
+| Mode | Flag | Vibe |
+| :--- | :--- | :--- |
+| **Staff Engineer** (Default) | `--personality staff` | Cold, cynical, technically unassailable, deeply disappointed in your architecture. |
+| **Linus Torvalds** | `--personality linus` | Explosive rage. Considers your bug a personal insult to computing history. |
+| **Gordon Ramsay** | `--personality ramsay` | Screaming in Hell's Kitchen. *"THIS CODE IS RAW! IDIOT SANDWICH!"* |
+| **Passive-Aggressive** | `--personality passive_aggressive` | Toxic corporate Slack. Dripping in fake politeness, `Per my previous 15 code reviews... 😊` |
+
+Example:
+```bash
+git-oops --file app.py --error "KeyError: 'age'" --personality ramsay
+```
+
+---
+
+## ⏪ 1-Second Patch Rollback (`--undo`)
+
+Applied a patch and want to revert back? `git-oops` automatically creates a safety snapshot before modifying anything:
+
+```bash
+git-oops --undo app.py
+```
+Output:
+```text
+⏪ [ROLLBACK SUCCESS] Restored 'app.py' from previous backup.
+```
+
+---
+
+## 🚀 Live Command Crash Catcher (`--run`)
+
+Tired of copying error messages? Let `git-oops` run your script and intercept crashes automatically:
+
+```bash
+git-oops --run "python app.py"
+```
 
 ---
 
