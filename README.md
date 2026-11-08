@@ -99,6 +99,8 @@ Apply this patch to 'broken.py' right now? [y/N]: y
 
 Want to check how much you've spent today?
 ```bash
+git-oops --status
+# Or without global install:
 python -m src.cli --status
 ```
 
@@ -137,7 +139,13 @@ export GEMINI_API_KEY="your-gemini-key"
 # Windows PowerShell:
 $env:GEMINI_API_KEY="your-gemini-key"
 
-# 4. Run git-oops on any crash
+# 4. Install locally or run directly
+pip install -e .
+
+# 5. Run git-oops on any crash
+git-oops --file broken.py --error "TypeError: unsupported operand type"
+
+# (Or run directly with python if preferred)
 python -m src.cli --file broken.py --error "TypeError: unsupported operand type"
 ```
 
