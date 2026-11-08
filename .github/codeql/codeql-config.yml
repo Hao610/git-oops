@@ -1,9 +1,7 @@
-name: "Exclude CLI Display and Storage Heuristics"
+name: "CodeQL Custom Config"
 
-# CodeQL False Positive Filter for CLI tools
-# In a code-repair CLI, rendering git patches to stdout and modifying files
-# in-place are core intended behaviors, not security vulnerabilities.
-- exclude:
-    id: py/clear-text-logging-sensitive-data
-- exclude:
-    id: py/clear-text-storage-sensitive-data
+query-filters:
+  - exclude:
+      id: py/clear-text-logging-sensitive-data
+  - exclude:
+      id: py/clear-text-storage-sensitive-data
