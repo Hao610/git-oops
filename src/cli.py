@@ -166,7 +166,8 @@ def main():
     if args.yes:
         applied = apply_patch_to_file(filepath, diagnosis['original_snippet'], diagnosis['fixed_snippet'])
         if applied:
-            print(f"{GREEN}✅ Patch successfully written to {filepath}!{RESET}\n")
+            print(f"{GREEN}✅ Patch successfully written to {filepath}!{RESET}")
+            print(f"{BLUE}💡 (Tip: run `git-oops --undo {filepath}` anytime if you want to revert){RESET}\n")
         else:
             print(f"{YELLOW}⚠️ Could not auto-apply: snippet did not match cleanly.{RESET}\n")
     else:
@@ -174,7 +175,8 @@ def main():
         if user_input in ["y", "yes"]:
             applied = apply_patch_to_file(filepath, diagnosis['original_snippet'], diagnosis['fixed_snippet'])
             if applied:
-                print(f"\n{GREEN}✅ Patch applied! Run your script again.{RESET}\n")
+                print(f"\n{GREEN}✅ Patch applied! Run your script again.{RESET}")
+                print(f"{BLUE}💡 (Tip: run `git-oops --undo {filepath}` anytime if you want to revert){RESET}\n")
             else:
                 print(f"\n{YELLOW}⚠️ Patch not applied: Original snippet could not be matched.{RESET}\n")
         else:

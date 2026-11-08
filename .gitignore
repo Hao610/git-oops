@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest / Caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Git-Oops backups & local artifacts
+*.oops.bak
+*.bak
+test_crash.py
+
+# Packaging / Distribution
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Environments
+.env
+venv/
+env/

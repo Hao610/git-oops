@@ -147,8 +147,15 @@ def apply_patch_to_file(target_filepath: str, original_snippet: str, fixed_snipp
         content = f.read()
     
     if original_snippet not in content:
-        # Fallback: line-by-line whitespace-tolerant match
-        return False
+        # Fallback 1: strip line-ending discrepancies (\r\n vs \n)
+        normalized_content = content.replace("\r\n", "\n")
+        normalized_orig = original_snippet.replace("\r\n", "\n")
+        if normalized_orig in normalized_content:
+            content = normalized_content
+            original_snippet = normalized_orig
+            fixed_snippet = fixed_snippet.replace("\r\n", "\n")
+        else:
+            return False
     
     # Create backup for rollback support
     backup_path = f"{target_filepath}.oops.bak"
