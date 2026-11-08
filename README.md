@@ -223,6 +223,7 @@ tests/test_oops.py::test_offline_critic_returns_valid_roast_and_diff PASSED [100
 ## 🤝 Community & Contributing
 
 We welcome contributions!
+- Read our [Help & Troubleshooting Guide](HELP.md) for quick FAQs and command sheets.
 - Read our [Contributing Guidelines](CONTRIBUTING.md) to set up your environment.
 - Review our [Code of Conduct](CODE_OF_CONDUCT.md).
 - To report security vulnerabilities privately, please review [SECURITY.md](SECURITY.md).
