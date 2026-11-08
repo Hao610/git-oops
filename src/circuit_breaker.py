@@ -15,6 +15,7 @@ from typing import Dict, Any, Optional
 CACHE_DIR = os.path.expanduser("~/.git_oops")
 CACHE_FILE = os.path.join(CACHE_DIR, "cache.json")
 LEDGER_FILE = os.path.join(CACHE_DIR, "spend_ledger.json")
+CONFIG_FILE = os.path.join(CACHE_DIR, "config.json")
 
 # Rates per 1M tokens ($0.15 input, $0.60 output approx Gemini 1.5 Flash)
 COST_PER_INPUT_TOKEN = 0.15 / 1_000_000
@@ -103,3 +104,26 @@ def store_cached_response(prompt_hash: str, response: Dict[str, Any]):
 
 def hash_content(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def get_default_config() -> Dict[str, Any]:
+    """Retrieves user persistent configuration."""
+    _ensure_dir()
+    default_cfg = {"personality": "staff", "daily_budget": 1.0}
+    if not os.path.exists(CONFIG_FILE):
+        return default_cfg
+    try:
+        with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+            return {**default_cfg, **cfg}
+    except Exception:
+        return default_cfg
+
+
+def set_config_value(key: str, value: Any):
+    """Saves a persistent configuration key (e.g. personality or daily budget)."""
+    _ensure_dir()
+    cfg = get_default_config()
+    cfg[key] = value
+    with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, indent=2)

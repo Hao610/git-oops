@@ -99,18 +99,25 @@ Apply this patch to 'broken.py' right now? [y/N]: y
 
 ## 🎭 Choose Your Roast Persona (`--personality`)
 
-Choose how painfully you want your bugs delivered:
+Choose how painfully you want your bugs delivered. You can pass it once via `--personality`, or **permanently save your favorite** with `--set-personality`:
+
+```bash
+# Permanently save your preference so you never have to type it again:
+git-oops --set-personality chef
+```
+
+Available caustic personas:
 
 | Mode | Flag | Vibe |
 | :--- | :--- | :--- |
 | **Staff Engineer** (Default) | `--personality staff` | Cold, cynical, technically unassailable, deeply disappointed in your architecture. |
-| **Linus Torvalds** | `--personality linus` | Explosive rage. Considers your bug a personal insult to computing history. |
-| **Gordon Ramsay** | `--personality ramsay` | Screaming in Hell's Kitchen. *"THIS CODE IS RAW! IDIOT SANDWICH!"* |
+| **Kernel Maintainer** | `--personality kernel` | Explosive rage. Considers your bug a personal insult to computing history. |
+| **Hell's Kitchen Chef** | `--personality chef` | Screaming in the kitchen. *"THIS CODE IS RAW! IDIOT SANDWICH!"* |
 | **Passive-Aggressive** | `--personality passive_aggressive` | Toxic corporate Slack. Dripping in fake politeness, `Per my previous 15 code reviews... 😊` |
 
 Example:
 ```bash
-git-oops --file app.py --error "KeyError: 'age'" --personality ramsay
+git-oops --file app.py --error "KeyError: 'age'" --personality chef
 ```
 
 ---

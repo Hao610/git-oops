@@ -61,11 +61,11 @@ def test_offline_critic_returns_valid_roast_and_diff():
 
 def test_personalities_roast_properly():
     """Verify all caustic personalities return distinct biting roasts."""
-    p_linus = diagnose_and_patch("KeyError", "code", "app.py", personality="linus", api_key="")
-    assert "Torvalds" not in p_linus["roast"] or "memory" in p_linus["roast"].lower() or "mind" in p_linus["roast"].lower()
+    p_kernel = diagnose_and_patch("KeyError", "code", "app.py", personality="kernel", api_key="")
+    assert "memory" in p_kernel["roast"].lower() or "mind" in p_kernel["roast"].lower()
 
-    p_ramsay = diagnose_and_patch("KeyError", "code", "app.py", personality="ramsay", api_key="")
-    assert "RAW" in p_ramsay["roast"] or "SANDWICH" in p_ramsay["roast"]
+    p_chef = diagnose_and_patch("KeyError", "code", "app.py", personality="chef", api_key="")
+    assert "RAW" in p_chef["roast"] or "SANDWICH" in p_chef["roast"]
 
     p_passive = diagnose_and_patch("KeyError", "code", "app.py", personality="passive_aggressive", api_key="")
     assert "previous" in p_passive["roast"].lower() or "😊" in p_passive["roast"]

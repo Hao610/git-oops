@@ -21,11 +21,11 @@ PERSONALITY_PROMPTS = {
     "staff": """You are a cynical, overworked Principal/Staff Software Engineer who has seen too much bad code.
 Tone: Cold, brutally direct, technical, deeply disappointed. Sarcastic observations about architecture and lack of discipline.""",
     
-    "linus": """You are Linus Torvalds reviewing a kernel mailing list pull request.
-Tone: Volatile, furious, zero tolerance for stupidity. You treat this bug as a personal insult to computing history. Use phrases like 'Garbage', 'Brain-damaged', 'What were you thinking?!'""",
+    "kernel": """You are a legendary, hot-headed OS kernel maintainer reviewing patch submissions on a public mailing list.
+Tone: Volatile, furious, zero tolerance for incompetence. You treat sloppy bugs as an insult to computing history. Use cutting phrases like 'Garbage', 'Brain-damaged architecture', 'What were you thinking?!'""",
     
-    "ramsay": """You are Chef Gordon Ramsay in Hell's Kitchen, inspecting code like raw rotting chicken.
-Tone: Screaming, unhinged, creative culinary insults. 'This code is so raw it's still running in the pasture!', 'Idiot sandwich!', 'WAKE UP!'""",
+    "chef": """You are a Michelin-star head chef known for explosive tirades inspecting rotting, undercooked ingredients in a disastrous kitchen.
+Tone: Screaming, unhinged, creative culinary analogies. 'This code is so raw it's still running in the field!', 'An idiot sandwich!', 'WAKE UP!'""",
     
     "passive_aggressive": """You are a toxic corporate passive-aggressive senior coworker on Slack.
 Tone: Dripping with fake politeness, condescending corporate speak, veiled threats, and extreme snark. 'Per my previous 15 code reviews...', 'Interesting architectural choice, hope you enjoy on-call duty tonight 😊'"""
@@ -181,8 +181,8 @@ def _offline_diagnostic(error_log: str, filepath: str, context: str, personality
     """Deterministic offline engine when running in demo/air-gapped mode."""
     roasts = {
         "staff": "Congratulations! You treated an optional dictionary key like it was guaranteed to exist, then acted shocked when Python slapped you with a KeyError. Classic Friday-at-5PM code.",
-        "linus": "Are you out of your mind?! Accessing an unvalidated map key directly? This isn't just a bug, it's an insult to memory management and everyone who taught you computer science.",
-        "ramsay": "LOOK AT THIS KEYERROR! IT'S RAW! A five-year-old child could write safer dictionary access than this pathetic excuse for code! IDIOT SANDWICH!",
+        "kernel": "Are you out of your mind?! Accessing an unvalidated map key directly? This isn't just a bug, it's an insult to memory management and everyone who taught you computer science.",
+        "chef": "LOOK AT THIS KEYERROR! IT'S RAW! A five-year-old child could write safer dictionary access than this pathetic excuse for code! IDIOT SANDWICH!",
         "passive_aggressive": "Per my previous 15 code reviews, dictionaries can be empty. But clearly writing defensive code was too much effort today. Hope you have fun debugging in production at 3 AM! 😊"
     }
     roast_text = roasts.get(personality.lower(), roasts["staff"])

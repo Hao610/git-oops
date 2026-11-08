@@ -20,7 +20,7 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-from src.circuit_breaker import get_daily_spend
+from src.circuit_breaker import get_daily_spend, get_default_config, set_config_value
 from src.engine import diagnose_and_patch, apply_patch_to_file, rollback_file
 
 # ANSI styling
@@ -35,20 +35,35 @@ RESET = "\033[0m"
 
 
 def main():
+    saved_cfg = get_default_config()
+
     parser = argparse.ArgumentParser(
         prog="git-oops",
         description="Brutally honest terminal crash fixer with daily spend-protection circuit breaker."
     )
     parser.add_argument("-f", "--file", help="Path to the file that crashed", default=None)
     parser.add_argument("-e", "--error", help="Error message or traceback string", default=None)
-    parser.add_argument("-b", "--budget", help="Daily API spend ceiling in USD (default: $1.00)", type=float, default=1.0)
-    parser.add_argument("-p", "--personality", help="Roast persona: 'staff', 'linus', 'ramsay', or 'passive_aggressive'", default="staff", choices=["staff", "linus", "ramsay", "passive_aggressive"])
+    parser.add_argument("-b", "--budget", help="Daily API spend ceiling in USD (default: $1.00)", type=float, default=saved_cfg.get("daily_budget", 1.0))
+    parser.add_argument("-p", "--personality", help="Roast persona: 'staff', 'kernel', 'chef', or 'passive_aggressive'", default=saved_cfg.get("personality", "staff"), choices=["staff", "kernel", "chef", "passive_aggressive"])
+    parser.add_argument("--set-personality", help="Permanently save default roast persona", choices=["staff", "kernel", "chef", "passive_aggressive"])
+    parser.add_argument("--set-budget", help="Permanently save default daily spend budget in USD", type=float)
     parser.add_argument("-y", "--yes", help="Auto-apply patch without interactive prompt", action="store_true")
     parser.add_argument("--undo", help="Roll back the last applied patch on target file", default=None)
     parser.add_argument("--run", help="Execute a command and auto-catch its crash (e.g. --run 'python app.py')", default=None)
     parser.add_argument("--status", help="Show today's accumulated API spend", action="store_true")
 
     args = parser.parse_args()
+
+    # Save permanent config
+    if args.set_personality:
+        set_config_value("personality", args.set_personality)
+        print(f"\n{GREEN}✅ Default persona permanently saved as '{args.set_personality}'!{RESET}\n")
+        return
+
+    if args.set_budget is not None:
+        set_config_value("daily_budget", args.set_budget)
+        print(f"\n{GREEN}✅ Default daily budget permanently saved as ${args.set_budget:.2f} USD!{RESET}\n")
+        return
 
     # Budget status check
     if args.status:
