@@ -6,7 +6,7 @@
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
 
 <p align="center">
-  <img src="cover.jpg" alt="git-oops Hero Banner" width="850" style="border-radius: 10px; margin: 15px 0;" />
+  <img src="assets/readme-hero.jpg" alt="git-oops Hero Banner" width="850" style="border-radius: 10px; margin: 15px 0;" />
 </p>
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
