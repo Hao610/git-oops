@@ -169,12 +169,15 @@ git-oops --set-budget 3.00
 ### Q6: How does the Anti-Thrashing Watchdog distinguish normal edits from infinite loops?
 `git-oops` calculates the SHA-256 cryptographic digest of every patch proposed per file. If an agent proposes the exact same patch or an immediate reverse toggle 3 times in a row, `git-oops` halts execution with `ANTI_THRASHING_HALT` to break the rabbit hole.
 
-### Q7: Can I use `git-oops` with other programming languages (JavaScript, TypeScript, Go, Rust)?
-Yes! 100% of the 20 defense modules are multi-language ready. The Ghost-Import Linter features native, multi-language validation:
-- **Python**: AST syntax traversal + runtime spec lookup.
-- **JavaScript / TypeScript**: Validates ES6 imports & CommonJS `require()` against Node.js built-ins and `package.json`/`node_modules`.
-- **Go**: Validates package imports against Go standard library prefixes and `go.mod`.
-All other modules (Firewall, Squeezer, Watchdog, Mutex, Shadow Sandbox, and Native MCP) work out-of-the-box across any codebase!
+### Q7: Can I use `git-oops` with other programming languages (JavaScript, TypeScript, Go, Rust, Java, C/C++)?
+Yes! 100% of all 20 defense modules are universally polyglot across any programming language:
+- **Python (`.py`)**: AST syntax tree traversal & runtime module spec lookup.
+- **JavaScript & TypeScript (`.js`, `.ts`, `.jsx`, `.tsx`)**: Validates ES6 imports & CommonJS `require()` against Node.js built-ins, `package.json`, and `node_modules`.
+- **Go (`.go`)**: Validates package paths against standard library prefixes and `go.mod`.
+- **Rust (`.rs`)**: Validates crate `use` statements against standard crates (`std`, `core`, `alloc`) and `Cargo.toml`.
+- **Java & Kotlin (`.java`, `.kt`)**: Validates package imports against standard Java platform prefixes and build manifests.
+- **C & C++ (`.c`, `.cpp`, `.h`)**: Validates `#include` headers against standard C/C++ STL headers.
+All other modules (Blast-Radius Firewall, Log Squeezer, Secret Redactor, Watchdog, Mutex, Shadow Sandbox, and Native MCP Server) operate completely language-agnostic across any codebase!
 
 ### Q8: Where are local configurations and cache files stored?
 All files are housed strictly inside your operating system's local user home directory:

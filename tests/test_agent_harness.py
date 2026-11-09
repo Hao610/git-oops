@@ -99,6 +99,28 @@ def test_ast_ghost_import_detection():
     assert ok is False
     assert "GHOST_IMPORT_DETECTED" in err
 
+    # Valid Rust std use
+    rust_valid = "use std::collections::HashMap;\nuse core::fmt;"
+    ok, _ = check_ghost_imports(rust_valid, filepath="main.rs")
+    assert ok is True
+
+    # Hallucinated fake Rust crate
+    rust_fake = "use fake_uninstalled_crate::exploit;"
+    ok, err = check_ghost_imports(rust_fake, filepath="main.rs")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid C++ header
+    cpp_valid = "#include <iostream>\n#include <vector>"
+    ok, _ = check_ghost_imports(cpp_valid, filepath="main.cpp")
+    assert ok is True
+
+    # Fake C++ header
+    cpp_fake = "#include <unreal_hallucinated_header_xyz>"
+    ok, err = check_ghost_imports(cpp_fake, filepath="main.cpp")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
 
 def test_blackbox_flight_recorder_and_rewind(tmp_path):
     test_file = tmp_path / "flight_test.py"

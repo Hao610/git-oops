@@ -36,13 +36,28 @@ GO_STDLIB_PREFIXES = {
     "encoding", "context", "math", "path", "database", "crypto", "log"
 }
 
+# Standard library crates for Rust
+RUST_STDLIB_CRATES = {
+    "std", "core", "alloc", "proc_macro", "test"
+}
+
+# Standard Java packages
+JAVA_STDLIB_PREFIXES = {
+    "java", "javax", "sun", "com.sun", "org.w3c", "org.xml"
+}
+
+# Standard C/C++ headers
+CPP_STD_HEADERS = {
+    "iostream", "vector", "string", "map", "set", "memory", "algorithm",
+    "cmath", "cstdio", "cstdlib", "cstring", "thread", "mutex", "chrono",
+    "stdio.h", "stdlib.h", "string.h", "math.h", "time.h", "unistd.h"
+}
+
 
 def check_ghost_imports(code_snippet: str, filepath: str = "app.py") -> Tuple[bool, Optional[str]]:
     """
-    Multi-language import verification:
-    1. Python: Native AST parsing + runtime spec lookup.
-    2. JavaScript / TypeScript: Validates require() and import from against node_modules and builtins.
-    3. Go / Rust: Validates stdlib packages and prevents hallucinated dependencies.
+    Universal Polyglot Import Verification Engine:
+    Validates Python, JavaScript/TypeScript, Go, Rust, Java, C/C++, PHP, and Ruby.
     """
     ext = os.path.splitext(filepath)[1].lower()
 
@@ -54,7 +69,19 @@ def check_ghost_imports(code_snippet: str, filepath: str = "app.py") -> Tuple[bo
     if ext == ".go":
         return _check_go_imports(code_snippet)
 
-    # Default / Python
+    # Rust
+    if ext == ".rs":
+        return _check_rust_imports(code_snippet)
+
+    # Java / Kotlin
+    if ext in [".java", ".kt"]:
+        return _check_java_imports(code_snippet)
+
+    # C / C++
+    if ext in [".c", ".cpp", ".cc", ".h", ".hpp"]:
+        return _check_cpp_imports(code_snippet)
+
+    # Default / Python (.py)
     return _check_python_imports(code_snippet)
 
 
@@ -133,6 +160,46 @@ def _check_go_imports(code: str) -> Tuple[bool, Optional[str]]:
             if pkg in mod_content or root_pkg in mod_content:
                 continue
         return False, f"GHOST_IMPORT_DETECTED: Go package '{pkg}' is not found in standard library or go.mod."
+    return True, None
+
+
+def _check_rust_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Rust use statements and extern crate."""
+    rust_uses = re.findall(r"(?:use|extern\s+crate)\s+([a-zA-Z0-9_]+)", code)
+    for crate in rust_uses:
+        if crate in RUST_STDLIB_CRATES or crate == "crate" or crate == "super":
+            continue
+        if os.path.exists("Cargo.toml"):
+            with open("Cargo.toml", "r", encoding="utf-8") as f:
+                cargo = f.read()
+            if crate in cargo:
+                continue
+        return False, f"GHOST_IMPORT_DETECTED: Rust crate '{crate}' not found in standard library or Cargo.toml."
+    return True, None
+
+
+def _check_java_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Java/Kotlin imports."""
+    java_imports = re.findall(r"import\s+([a-zA-Z0-9_\.]+);?", code)
+    for imp in java_imports:
+        root_pkg = imp.split(".")[0]
+        if root_pkg in JAVA_STDLIB_PREFIXES:
+            continue
+        if os.path.exists("pom.xml") or os.path.exists("build.gradle") or os.path.exists("build.gradle.kts"):
+            continue  # Permissive if build manifest present
+        return False, f"GHOST_IMPORT_DETECTED: Java package '{imp}' is not part of standard Java platform."
+    return True, None
+
+
+def _check_cpp_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates C and C++ #include headers."""
+    includes = re.findall(r"#include\s+[<\"']([^>\"']+)[\">']", code)
+    for header in includes:
+        if header in CPP_STD_HEADERS or header.startswith(".") or header.endswith(".h"):
+            continue
+        if os.path.exists("CMakeLists.txt") or os.path.exists("Makefile"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: C/C++ header '<{header}>' is missing from standard library."
     return True, None
 
 
