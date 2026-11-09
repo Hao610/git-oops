@@ -32,7 +32,8 @@ def check_anti_thrashing(filepath: str, patch_str: str, max_oscillations: int = 
         except Exception:
             history = {}
 
-    patch_hash = hashlib.sha256(patch_str.strip().encode()).hexdigest()
+    # Compute cryptographic checksum of code diff to track repeated oscillations
+    patch_hash = hashlib.sha256(patch_str.strip().encode("utf-8")).hexdigest()
     file_records = history.get(filepath, [])
     
     # Count occurrences of this exact patch or rapid reverts in recent history
