@@ -17,6 +17,8 @@ jobs:
           fetch-depth: 0
 
       - name: Sync and Publish Official GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -26,10 +28,10 @@ jobs:
           git push origin v0.2.0 --force
 
           # Check if Release exists; create or edit it
-          if gh release view v0.2.0 >/dev/null 2>&1; then
-            gh release edit v0.2.0 --target "$GITHUB_SHA" --notes-file .github/release_notes.md
+          if gh release view v0.2.0; then
+            echo "Release exists, editing..."
+            gh release edit v0.2.0 --target "$GITHUB_SHA" --notes-file .github/release_notes.md --draft=false
           else
-            gh release create v0.2.0 --title "⚡ git-oops v0.2.0: The Dual-Mode AI Agent Safety Harness & Crash Fixer" --notes-file .github/release_notes.md --target "$GITHUB_SHA"
+            echo "Release does not exist, creating..."
+            gh release create v0.2.0 --title "⚡ git-oops v0.2.0: The Dual-Mode AI Agent Safety Harness & Crash Fixer" --notes-file .github/release_notes.md --target "$GITHUB_SHA" --draft=false
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
