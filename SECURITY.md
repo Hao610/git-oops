@@ -6,7 +6,18 @@ We release patches and security updates for the current major branch.
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 0.2.x   | :white_check_mark: |
 | 0.1.x   | :white_check_mark: |
+
+---
+
+## 🔒 100% Local & Privacy Guarantee
+
+`git-oops` is engineered from the ground up to respect developer sovereignty:
+- **Zero Telemetry**: No analytics, no phone-home pings, no usage metrics sent to external servers.
+- **Air-Gapped Safety**: All firewalls, anti-thrashing heuristics, AST parsing, and secret redactors execute 100% locally on your machine.
+- **Local Storage Isolation**: Flight recorder logs, snapshots, and antibody databases live exclusively under `~/.git_oops/` in your local home directory.
+- **Credential Masking**: High-entropy strings, tokens, and keys are automatically masked before any model analysis.
 
 ---
 
