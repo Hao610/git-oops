@@ -16,13 +16,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Sync latest release tag (v0.2.0) to current HEAD
+      - name: Sync latest release tag and update GitHub Release target
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-          # Delete existing remote tag and recreate on HEAD
+          # Force move v0.2.0 tag to current HEAD
           git tag -f v0.2.0
           git push origin v0.2.0 --force
+
+          # Automatically update the GitHub Release to point directly to the current HEAD
+          gh release edit v0.2.0 --target "$GITHUB_SHA"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
