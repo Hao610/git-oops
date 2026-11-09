@@ -142,3 +142,10 @@ Run `pip install -e .` inside the repository directory, or run with `python -m s
 
 ### Q2: I don't have an API key. Can I still use it?
 Yes! `git-oops` includes a deterministic offline diagnostic critic. You can test all 20 safety features, UI cards, and diff applications completely offline without an internet connection or credit card.
+
+### Q3: What is the privacy policy regarding my code and files?
+`git-oops` operates under a strict **100% Local & Zero-Telemetry Guarantee**:
+- No user analytics, telemetry tracking, or background pings are ever dispatched.
+- All 20 defense modules (firewall, squeezer, AST linter, shadow workspace, etc.) run locally on your device.
+- All audit data (flight recorder, snapshots, and antibody patterns) is stored exclusively on your local disk at `~/.git_oops/`.
+- Secret redaction automatically masks all API keys and bearer credentials before any prompt reaches an LLM.
