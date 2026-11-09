@@ -169,8 +169,12 @@ git-oops --set-budget 3.00
 ### Q6: How does the Anti-Thrashing Watchdog distinguish normal edits from infinite loops?
 `git-oops` calculates the SHA-256 cryptographic digest of every patch proposed per file. If an agent proposes the exact same patch or an immediate reverse toggle 3 times in a row, `git-oops` halts execution with `ANTI_THRASHING_HALT` to break the rabbit hole.
 
-### Q7: Can I use `git-oops` with other programming languages (JavaScript, Go, Rust)?
-Yes! While the AST Ghost-Import linter is currently specialized for Python, all other 19 defense modules — including the Blast-Radius Firewall, Context Log Squeezer, Secret Redactor, Shadow Workspace, Anti-Thrashing Watchdog, and Native MCP Server — work seamlessly across any language stack.
+### Q7: Can I use `git-oops` with other programming languages (JavaScript, TypeScript, Go, Rust)?
+Yes! 100% of the 20 defense modules are multi-language ready. The Ghost-Import Linter features native, multi-language validation:
+- **Python**: AST syntax traversal + runtime spec lookup.
+- **JavaScript / TypeScript**: Validates ES6 imports & CommonJS `require()` against Node.js built-ins and `package.json`/`node_modules`.
+- **Go**: Validates package imports against Go standard library prefixes and `go.mod`.
+All other modules (Firewall, Squeezer, Watchdog, Mutex, Shadow Sandbox, and Native MCP) work out-of-the-box across any codebase!
 
 ### Q8: Where are local configurations and cache files stored?
 All files are housed strictly inside your operating system's local user home directory:

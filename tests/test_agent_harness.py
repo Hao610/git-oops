@@ -77,14 +77,25 @@ def test_anti_thrashing_watchdog():
 
 
 def test_ast_ghost_import_detection():
-    # Valid standard import
+    # Valid standard Python import
     safe_code = "import json\nimport sys\n"
-    ok, _ = check_ghost_imports(safe_code)
+    ok, _ = check_ghost_imports(safe_code, filepath="app.py")
     assert ok is True
 
-    # Hallucinated imaginary package
+    # Hallucinated imaginary Python package
     ghost_code = "import imaginary_hallucinated_package_xyz\n"
-    ok, err = check_ghost_imports(ghost_code)
+    ok, err = check_ghost_imports(ghost_code, filepath="app.py")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid JavaScript Node builtin
+    js_valid = "const fs = require('fs');\nimport path from 'path';"
+    ok, _ = check_ghost_imports(js_valid, filepath="server.js")
+    assert ok is True
+
+    # Hallucinated fake Node module
+    js_fake = "import hackerHelper from 'uninstalled-fake-lib-123';"
+    ok, err = check_ghost_imports(js_fake, filepath="server.js")
     assert ok is False
     assert "GHOST_IMPORT_DETECTED" in err
 

@@ -266,8 +266,8 @@ def main():
             draw_card("ANTI-THRASHING WATCHDOG TRIGGERED", thrash_msg, color_border=FG_RED, color_title=FG_RED)
         return
 
-    # Check Ghost Imports on fixed snippet
-    ghost_ok, ghost_err = check_ghost_imports(diagnosis['fixed_snippet'])
+    # Check Ghost Imports on fixed snippet across all languages
+    ghost_ok, ghost_err = check_ghost_imports(diagnosis['fixed_snippet'], filepath=filepath)
     if not ghost_ok:
         if args.agent_mode:
             print(json.dumps({"error": "GHOST_IMPORT_REJECTED", "details": ghost_err}))
