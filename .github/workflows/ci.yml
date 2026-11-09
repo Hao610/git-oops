@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # 'latest' points dynamically to the bleeding-edge Python release (3.x, 4.x, or whatever future major version exists)
-        python-version: ["3.10", "3.11", "3.12", "latest"]
+        # Standard stable Python versions supported natively by setup-python
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
     - uses: actions/checkout@v7
