@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Sync latest release tag and update GitHub Release target
+      - name: Sync and Publish Official GitHub Release
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -25,7 +25,11 @@ jobs:
           git tag -f v0.2.0
           git push origin v0.2.0 --force
 
-          # Automatically update the GitHub Release to point directly to the current HEAD
-          gh release edit v0.2.0 --target "$GITHUB_SHA"
+          # Check if Release exists; create or edit it
+          if gh release view v0.2.0 >/dev/null 2>&1; then
+            gh release edit v0.2.0 --target "$GITHUB_SHA" --notes-file .github/release_notes.md
+          else
+            gh release create v0.2.0 --title "⚡ git-oops v0.2.0: The Dual-Mode AI Agent Safety Harness & Crash Fixer" --notes-file .github/release_notes.md --target "$GITHUB_SHA"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
