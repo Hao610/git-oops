@@ -1,9 +1,13 @@
-from setuptools import setup, find_packages
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    from distutils.core import setup
+    find_packages = lambda: ["src"]
 
 setup(
     name="git-oops",
-    version="0.1.0",
-    description="Brutally honest terminal crash fixer with daily spend-protection circuit breaker.",
+    version="0.2.0",
+    description="The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness.",
     author="Hao",
     packages=find_packages(),
     install_requires=[

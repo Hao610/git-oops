@@ -1,88 +1,144 @@
-# 🆘 Git-Oops Help & Troubleshooting Manual
+# 🆘 Git-Oops Complete Manual: Beginner to Agent Master
 
-Welcome to the definitive guide and troubleshooting reference for **`git-oops`**.
+Welcome to the definitive manual for **`git-oops`** — the Dual-Mode Terminal Crash Fixer and Autonomous AI Agent Safety Harness.
 
 ---
 
-## ⚡ Quick Command Reference Sheet
+## 🐣 Absolute Beginner Quickstart (Zero-Confusion Guide)
 
+If you are a complete beginner or don't know how to install CLIs and MCP servers, **follow these 3 simple steps**:
+
+### Step 1: Install `git-oops` with 1 command
+Open your terminal (PowerShell, Command Prompt, or Mac/Linux Terminal) and run:
+
+```bash
+git clone https://github.com/Hao610/git-oops.git
+cd git-oops
+pip install -e .
+```
+*(That's it! `git-oops` is now a global command on your computer.)*
+
+---
+
+### Step 2: Use it as a Human (Fix a broken file)
+Whenever a script crashes:
+```bash
+git-oops --file broken.py --error "KeyError: 'user_id'"
+```
+- It roasts your code with funny commentary.
+- It displays a high-fidelity visual card with a unified Git patch.
+- Press **`y`** to apply the fix immediately to your file!
+- Regret it? Type **`git-oops --undo broken.py`** to instantly restore your backup!
+
+---
+
+### Step 3: How to connect `git-oops` to Claude Desktop or Cursor (MCP Setup)
+
+You don't need any networking knowledge. Modern AI assistants support **MCP (Model Context Protocol)**. Here is how to hook it up in 30 seconds:
+
+#### For Claude Desktop:
+1. Open Claude Desktop Settings ➔ **Developer** ➔ **Edit Config**.
+2. Open your `claude_desktop_config.json` and paste this block:
+
+```json
+{
+  "mcpServers": {
+    "git-oops": {
+      "command": "git-oops",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+3. Restart Claude Desktop. You will see a small hammer icon 🛠️ showing `git_oops_diagnose` and `git_oops_safe_exec`! Claude can now use your terminal tools safely!
+
+#### For Antigravity (Google AGY):
+In your workspace or global config, add to your MCP server configuration:
+```json
+{
+  "mcpServers": {
+    "git-oops": {
+      "command": "git-oops",
+      "args": ["--mcp"]
+    }
+  }
+}
+```
+Now Antigravity subagents and autonomous tasks will automatically route code fixes and terminal commands through `git-oops`'s safety harness.
+
+#### For OpenAI Codex / Qoder / Copilot CLI / Aider / Devin:
+These tools execute shell commands in a sub-process. You don't even need to configure MCP!
+Simply instruct the agent or set its system prompt / rule to:
+> *"Whenever you encounter a crash or want to apply a patch safely, execute: `git-oops --agent --file <path> --error \"<error>\" --yes`"*
+
+The agent will receive a pristine, single-turn JSON payload:
+```json
+{
+  "status": "APPLIED",
+  "target_file": "app.py",
+  "step_id": 1731174000,
+  "roast": "...",
+  "root_cause": "KeyError on missing dict key",
+  "cost_usd": 0.00012
+}
+```
+Zero ANSI garbage, 100% reliable programmatic parsing across any autonomous agent!
+
+---
+
+## ⚡ Comprehensive Command Sheet
+
+### 🧑‍💻 Human Mode (Interactive & Colorful)
 | Task | Command | Description |
 | :--- | :--- | :--- |
-| **Fix crash directly** | `git-oops --file app.py --error "KeyError: 'id'"` | Analyzes crash, roasts the bug, and generates a 1-click patch. |
-| **Live command runner** | `git-oops --run "python app.py"` | Executes your script, intercepts any crash live, and diagnoses immediately. |
-| **Check today's budget** | `git-oops --status` | Shows accumulated USD spend, threshold, and remaining safe headroom. |
-| **Undo / Rollback patch** | `git-oops --undo app.py` | Instantly reverts the file to its pre-patch state. |
-| **Set toxic persona** | `git-oops --personality [mode]` | One-time persona (`staff`, `kernel`, `chef`, `passive_aggressive`). |
-| **Permanently save persona**| `git-oops --set-personality chef` | Saves preferred persona permanently to `~/.git_oops/config.json`. |
-| **Set daily spend limit** | `git-oops --set-budget 2.50` | Hard-caps maximum daily API spend in USD. |
-| **Auto-apply patch** | `git-oops --file app.py --error "..." --yes` | Applies patch directly without interactive confirmation prompt. |
+| **Fix crash directly** | `git-oops --file app.py --error "..."` | Analyzes crash, roasts code, displays Git diff. |
+| **Run command & intercept crash**| `git-oops --run "python app.py"` | Executes command live, catches crash, and auto-fixes. |
+| **Undo last patch** | `git-oops --undo app.py` | Restores the file from its `.oops.bak` snapshot. |
+| **Check today's budget** | `git-oops --status` | Shows today's spend down to 5 decimals. |
+| **Set daily spend budget** | `git-oops --set-budget 2.50` | Hard-caps API spending at $2.50 USD. |
+| **Set roast persona** | `git-oops --set-personality chef` | Locks in `chef`, `staff`, `kernel`, or `passive_aggressive`. |
+
+### 🤖 Autonomous Agent Mode (Headless JSON & MCP)
+| Task | Command | Description |
+| :--- | :--- | :--- |
+| **Machine-Readable Mode** | `git-oops --agent --file app.py --error "..." --yes` | Emits pure JSON without ANSI colors for AI parsing. |
+| **Start MCP Server** | `git-oops --mcp` | Listens on stdio (JSON-RPC 2.0) for Claude/Cursor. |
+| **Shadow Sandbox Isolation** | `git-oops --shadow --file app.py --error "..."` | Dry-runs patch in an isolated temporary clone directory. |
+| **Dual-Model Consensus** | `git-oops --consensus --file app.py --error "..."` | Dispatches to two models; only patches if both agree. |
+| **View Flight Recorder** | `git-oops --flight-log` | Displays audit log of recent agent decisions. |
+| **Rewind Step** | `git-oops --rewind <step_id>` | Restores file state back to a previous snapshot step. |
 
 ---
 
-## 🎭 Roast Personas Explained
+## 🛡️ The Complete 20-Pillar Defense Matrix
 
-`git-oops` offers 4 distinct personalities with zero polite filler:
-
-1. **`staff` (Default)**: Cold, cynical, technically unassailable Principal/Staff Engineer. Pointed critique on architectural laziness.
-2. **`kernel`**: Explosive, furious OS kernel maintainer. Zero tolerance for memory leaks, invalid map access, or sloppy paradigms.
-3. **`chef`**: High-decibel kitchen tirade. *"THIS CODE IS RAW! AN IDIOT SANDWICH!"*
-4. **`passive_aggressive`**: Toxic corporate Slack coworker. *"Per my previous 15 code reviews... hope you enjoy on-call duty tonight 😊"*
-
----
-
-## 🛡️ Circuit Breaker & Spend Protection
-
-### How does the circuit breaker work?
-Every outgoing API request calculates token volume and records exact costs in `~/.git_oops/spend_ledger.json`. 
-If cumulative spend today meets or exceeds your threshold (default: `$1.00 USD`), the engine raises `PermissionError` and physically aborts requests to prevent surprise cloud bills.
-
-### What is the deterministic cache?
-Duplicate queries with identical file content and error tracebacks generate an exact SHA-256 hash key stored in `~/.git_oops/cache.json`.
-* **Cost**: $0.00000 USD
-* **Latency**: 0 ms
-* **Internet connection**: Not required
-
----
-
-## 🔧 Frequently Asked Questions & Troubleshooting
-
-### Q1: `Error: File 'app.py' not found`
-* **Cause**: You provided a relative file path that does not exist in your current terminal working directory.
-* **Fix**: Ensure your shell is in the repository root or provide the full absolute path:
-  ```bash
-  git-oops --file D:\MyProject\app.py --error "ValueError: invalid literal"
-  ```
-
-### Q2: I pressed `[y]` but my code broke even further. How do I revert?
-* **Fix**: Run the instant undo command:
-  ```bash
-  git-oops --undo app.py
-  ```
-  `git-oops` creates a protected `.oops.bak` snapshot before modifying any file on disk.
-
-### Q3: How do I use `git-oops` offline without an API key?
-* If `GEMINI_API_KEY` is not found in your environment, `git-oops` automatically switches to the built-in offline simulation critic, allowing full evaluation without internet or cloud credentials.
-
-### Q4: How do I configure my API Key?
-* **Linux / macOS**:
-  ```bash
-  export GEMINI_API_KEY="AIzaSy..."
-  ```
-* **Windows PowerShell**:
-  ```powershell
-  $env:GEMINI_API_KEY="AIzaSy..."
-  ```
-* **Windows Command Prompt (CMD)**:
-  ```cmd
-  set GEMINI_API_KEY=AIzaSy...
-  ```
+1. **Dual-Mode Engine**: Human visual UI or headless agent JSON.
+2. **Native MCP Server**: JSON-RPC 2.0 stdio server for modern AI tools.
+3. **Blast-Radius Firewall**: Blocks `rm -rf`, `force-push`, and disk wiping.
+4. **Supply-Chain Shield**: Blocks hallucinated and typosquatted package traps (`reqeusts`).
+5. **Egress Sniffer**: Blocks patches containing unauthorized phone-home or data exfiltration calls.
+6. **Multi-Agent Mutex**: Cooperative file locks preventing concurrent agents from corrupting files.
+7. **Shadow Workspace**: Ephemeral clone sandbox; commits back only upon full validation.
+8. **Anti-Thrashing Watchdog**: Halts agent edit-revert loops (> 3 times).
+9. **Regression Guard**: Runs project unit tests in sandbox before modifying source code.
+10. **AST Ghost-Import Linter**: 0 ms syntax scan blocking hallucinated non-existent modules.
+11. **Cross-Model Consensus**: Dual-model arbitration eliminating single-model hallucinations.
+12. **Anti-Bloat Complexity Slasher**: Rejects patches that inflate cyclomatic complexity into spaghetti code.
+13. **License Taint Shield**: Blocks viral GPL/AGPL copy-paste contamination.
+14. **Context Log Squeezer**: Compresses 5,000-line stack traces to 20 focused lines.
+15. **Secret Redactor**: Auto-masks API keys and tokens (`<REDACTED_SECRET>`).
+16. **Intent Prefetch Engine**: Markov-chain prediction prefetching next-step responses.
+17. **Flight Recorder**: Full audit logging of agent intentions, tools, and snapshots.
+18. **Time-Machine Rewind**: 1-click snapshot restoration to any previous step.
+19. **Antibody Immunity DB**: Persistent cross-session memory ledger of verified architecture patterns.
+20. **Anti-Bit-Rot Evolution**: Auto-migrates schema and models to prevent code aging over decades.
 
 ---
 
-## 📄 Storage Paths & Privacy
-All persistent files are stored strictly locally in your user home directory:
-* **Config**: `~/.git_oops/config.json`
-* **Cost Ledger**: `~/.git_oops/spend_ledger.json`
-* **Response Cache**: `~/.git_oops/cache.json`
+## ❓ FAQ & Troubleshooting
 
-No telemetry, personal data, or codebase analytics are ever collected or transmitted.
+### Q1: `git-oops : The term 'git-oops' is not recognized`
+Run `pip install -e .` inside the repository directory, or run with `python -m src.cli` directly.
+
+### Q2: I don't have an API key. Can I still use it?
+Yes! `git-oops` includes a deterministic offline diagnostic critic. You can test all 20 safety features, UI cards, and diff applications completely offline without an internet connection or credit card.
