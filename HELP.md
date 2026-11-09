@@ -169,14 +169,22 @@ git-oops --set-budget 3.00
 ### Q6: How does the Anti-Thrashing Watchdog distinguish normal edits from infinite loops?
 `git-oops` calculates the SHA-256 cryptographic digest of every patch proposed per file. If an agent proposes the exact same patch or an immediate reverse toggle 3 times in a row, `git-oops` halts execution with `ANTI_THRASHING_HALT` to break the rabbit hole.
 
-### Q7: Can I use `git-oops` with other programming languages (JavaScript, TypeScript, Go, Rust, Java, C/C++)?
+### Q7: Can I use `git-oops` with other programming languages?
 Yes! 100% of all 20 defense modules are universally polyglot across any programming language:
 - **Python (`.py`)**: AST syntax tree traversal & runtime module spec lookup.
-- **JavaScript & TypeScript (`.js`, `.ts`, `.jsx`, `.tsx`)**: Validates ES6 imports & CommonJS `require()` against Node.js built-ins, `package.json`, and `node_modules`.
+- **JavaScript & TypeScript (`.js`, `.ts`, `.jsx`, `.tsx`, `.mjs`)**: Validates ES6 imports & CommonJS `require()` against Node.js built-ins, `package.json`, and `node_modules`.
 - **Go (`.go`)**: Validates package paths against standard library prefixes and `go.mod`.
 - **Rust (`.rs`)**: Validates crate `use` statements against standard crates (`std`, `core`, `alloc`) and `Cargo.toml`.
-- **Java & Kotlin (`.java`, `.kt`)**: Validates package imports against standard Java platform prefixes and build manifests.
-- **C & C++ (`.c`, `.cpp`, `.h`)**: Validates `#include` headers against standard C/C++ STL headers.
+- **Java & Kotlin (`.java`, `.kt`)**: Validates package imports against standard Java/Kotlin platform prefixes and build manifests.
+- **C & C++ (`.c`, `.cpp`, `.cc`, `.h`, `.hpp`)**: Validates `#include` headers against standard C/C++ STL headers.
+- **PHP (`.php`)**: Validates `use` / `require` against PHP core extensions, built-in classes, and `composer.json`.
+- **Ruby (`.rb`)**: Validates `require` against Ruby standard library modules and `Gemfile`.
+- **C# / .NET (`.cs`)**: Validates `using` directives against .NET standard base class library namespaces (`System`, `Microsoft`) and `.csproj`.
+- **Swift (`.swift`)**: Validates `import` against Apple SDK & Swift stdlib (`Foundation`, `SwiftUI`, `Combine`, etc.) and `Package.swift`.
+- **Dart & Flutter (`.dart`)**: Validates `import` against core Dart SDK (`dart:*`), Flutter SDK (`package:flutter/*`), and `pubspec.yaml`.
+- **Lua (`.lua`)**: Validates `require` against Lua standard libraries (`string`, `table`, `math`, `io`, etc.) and local module files.
+- **Shell / Bash (`.sh`, `.bash`, `.zsh`)**: Validates `source` and `.` file targets against existing filesystem paths.
+- **Exotic Scripts & Other Languages (`.r`, `.jl`, `.ex`, `.scala`, `.pl`)**: Universal heuristic scanner blocks obvious hallucination traps and non-existent dependencies.
 All other modules (Blast-Radius Firewall, Log Squeezer, Secret Redactor, Watchdog, Mutex, Shadow Sandbox, and Native MCP Server) operate completely language-agnostic across any codebase!
 
 ### Q8: Where are local configurations and cache files stored?
@@ -196,3 +204,19 @@ Pass the `--agent` (or `--json`) flag along with `--yes` to auto-apply validated
 git-oops --agent --file src/main.py --error "$ERROR_LOG" --yes
 ```
 It returns standard Unix exit codes (`0` for success, non-zero for blocked/failures) with clean JSON for CI loggers.
+
+### Q11: What makes git-oops different from standard linters or pre-commit hooks?
+Standard linters check formatting and known syntax errors on static code, but they:
+1. Don't catch runtime crash tracebacks or hallucinated package installations (`pip install reqeusts`).
+2. Don't compress gigantic 5,000-line logs to save 90% of LLM context window costs.
+3. Don't protect against infinite edit-revert loops when an agent gets stuck.
+4. Don't provide an isolated shadow workspace or multi-agent concurrency mutex locks.
+`git-oops` is an active **runtime safety harness and autonomous supervisor** specifically built for the era of AI coding agents.
+
+### Q12: Can I customize the roasting style or turn it off entirely?
+Yes! Use `--set-personality <type>` to switch between:
+- `chef`: Sarcastic, high-standards restaurant kitchen head chef.
+- `staff`: Pragmatic, deadpan L6 Staff Software Engineer.
+- `kernel`: Grumpy, zero-nonsense systems developer.
+- `passive_aggressive`: Polite but subtly biting critiques.
+In `--agent` or `--json` mode, roasts are stripped or strictly contained within structured JSON fields so machine parsing remains untouched.

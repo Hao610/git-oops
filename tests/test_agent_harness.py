@@ -121,6 +121,67 @@ def test_ast_ghost_import_detection():
     assert ok is False
     assert "GHOST_IMPORT_DETECTED" in err
 
+    # Valid PHP builtin
+    php_valid = "<?php\nuse PDO;\nuse DateTime;"
+    ok, _ = check_ghost_imports(php_valid, filepath="index.php")
+    assert ok is True
+
+    # Hallucinated PHP namespace
+    php_fake = "<?php\nuse NonExistentVendor\\ExploitModule;"
+    ok, err = check_ghost_imports(php_fake, filepath="index.php")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid C# namespace
+    cs_valid = "using System;\nusing System.Collections.Generic;"
+    ok, _ = check_ghost_imports(cs_valid, filepath="Program.cs")
+    assert ok is True
+
+    # Hallucinated C# namespace
+    cs_fake = "using NonExistentFakeLib.SecurityExploits;"
+    ok, err = check_ghost_imports(cs_fake, filepath="Program.cs")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Swift standard module
+    swift_valid = "import Foundation\nimport SwiftUI"
+    ok, _ = check_ghost_imports(swift_valid, filepath="App.swift")
+    assert ok is True
+
+    # Hallucinated Swift module
+    swift_fake = "import CrazyHallucinatedSwiftKit"
+    ok, err = check_ghost_imports(swift_fake, filepath="App.swift")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Dart import
+    dart_valid = "import 'dart:async';\nimport 'dart:convert';"
+    ok, _ = check_ghost_imports(dart_valid, filepath="main.dart")
+    assert ok is True
+
+    # Hallucinated Dart package
+    dart_fake = "import 'package:fake_uninstalled_library_404/api.dart';"
+    ok, err = check_ghost_imports(dart_fake, filepath="main.dart")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Lua module
+    lua_valid = "local json = require('string')\nlocal math = require('math')"
+    ok, _ = check_ghost_imports(lua_valid, filepath="script.lua")
+    assert ok is True
+
+    # Hallucinated Lua module
+    lua_fake = "local p = require('nonexistent_hallucinated_lua_lib')"
+    ok, err = check_ghost_imports(lua_fake, filepath="script.lua")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Generic exotic language fallback (e.g. R, Julia, Elixir)
+    exotic_fake = "import 'uninstalled_hallucinated_package';"
+    ok, err = check_ghost_imports(exotic_fake, filepath="script.ex")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
 
 def test_blackbox_flight_recorder_and_rewind(tmp_path):
     test_file = tmp_path / "flight_test.py"

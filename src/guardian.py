@@ -33,7 +33,8 @@ NODE_BUILTINS = {
 # Standard library modules for Go
 GO_STDLIB_PREFIXES = {
     "fmt", "os", "io", "net", "time", "sync", "strings", "bytes", "errors",
-    "encoding", "context", "math", "path", "database", "crypto", "log"
+    "encoding", "context", "math", "path", "database", "crypto", "log",
+    "bufio", "sort", "regexp", "strconv", "flag", "syscall", "testing"
 }
 
 # Standard library crates for Rust
@@ -41,23 +42,63 @@ RUST_STDLIB_CRATES = {
     "std", "core", "alloc", "proc_macro", "test"
 }
 
-# Standard Java packages
+# Standard Java / Kotlin packages
 JAVA_STDLIB_PREFIXES = {
-    "java", "javax", "sun", "com.sun", "org.w3c", "org.xml"
+    "java", "javax", "sun", "com.sun", "org.w3c", "org.xml", "kotlin", "android", "androidx", "org.junit"
 }
 
 # Standard C/C++ headers
 CPP_STD_HEADERS = {
     "iostream", "vector", "string", "map", "set", "memory", "algorithm",
     "cmath", "cstdio", "cstdlib", "cstring", "thread", "mutex", "chrono",
-    "stdio.h", "stdlib.h", "string.h", "math.h", "time.h", "unistd.h"
+    "unordered_map", "unordered_set", "queue", "deque", "stack", "utility",
+    "functional", "fstream", "sstream", "type_traits", "exception",
+    "stdio.h", "stdlib.h", "string.h", "math.h", "time.h", "unistd.h",
+    "fcntl.h", "sys/types.h", "sys/stat.h", "pthread.h", "assert.h"
+}
+
+# Standard PHP extensions, built-in classes, and namespaces
+PHP_BUILTIN_EXTENSIONS = {
+    "date", "pcre", "zlib", "filter", "hash", "json", "spl", "pdo", "session",
+    "standard", "tokenizer", "xml", "curl", "mbstring", "openssl", "fileinfo",
+    "datetime", "datetimeimmutable", "exception", "stdclass", "closure",
+    "generator", "throwable", "error", "iterator", "arrayaccess", "countable"
+}
+
+# Standard Ruby library modules
+RUBY_STDLIB_MODULES = {
+    "json", "fileutils", "net/http", "uri", "securerandom", "date", "time",
+    "open-uri", "logger", "stringio", "base64", "csv", "yaml", "digest",
+    "pathname", "optparse", "singleton", "benchmark", "tempfile"
+}
+
+# Standard C# / .NET namespaces
+CSHARP_STDLIB_NAMESPACES = {
+    "System", "Microsoft", "Windows"
+}
+
+# Standard Swift / Apple frameworks
+SWIFT_STDLIB_MODULES = {
+    "Foundation", "SwiftUI", "UIKit", "AppKit", "CoreGraphics", "Combine",
+    "CoreData", "CoreLocation", "AVFoundation", "Network", "Dispatch", "OSLog"
+}
+
+# Standard Dart / Flutter packages
+DART_STDLIB_PACKAGES = {
+    "dart:async", "dart:collection", "dart:convert", "dart:core", "dart:developer",
+    "dart:io", "dart:isolate", "dart:math", "dart:typed_data", "package:flutter"
+}
+
+# Standard Lua modules
+LUA_STDLIB_MODULES = {
+    "string", "table", "math", "io", "os", "debug", "coroutine", "utf8", "package"
 }
 
 
 def check_ghost_imports(code_snippet: str, filepath: str = "app.py") -> Tuple[bool, Optional[str]]:
     """
     Universal Polyglot Import Verification Engine:
-    Validates Python, JavaScript/TypeScript, Go, Rust, Java, C/C++, PHP, and Ruby.
+    Validates Python, JS/TS, Go, Rust, Java, C/C++, PHP, Ruby, and unknown scripts.
     """
     ext = os.path.splitext(filepath)[1].lower()
 
@@ -80,6 +121,38 @@ def check_ghost_imports(code_snippet: str, filepath: str = "app.py") -> Tuple[bo
     # C / C++
     if ext in [".c", ".cpp", ".cc", ".h", ".hpp"]:
         return _check_cpp_imports(code_snippet)
+
+    # PHP
+    if ext == ".php":
+        return _check_php_imports(code_snippet)
+
+    # Ruby
+    if ext == ".rb":
+        return _check_ruby_imports(code_snippet)
+
+    # C# / .NET (.cs)
+    if ext == ".cs":
+        return _check_csharp_imports(code_snippet)
+
+    # Swift (.swift)
+    if ext == ".swift":
+        return _check_swift_imports(code_snippet)
+
+    # Dart / Flutter (.dart)
+    if ext == ".dart":
+        return _check_dart_imports(code_snippet)
+
+    # Lua (.lua)
+    if ext == ".lua":
+        return _check_lua_imports(code_snippet)
+
+    # Shell / Bash (.sh, .bash, .zsh)
+    if ext in [".sh", ".bash", ".zsh"]:
+        return _check_shell_imports(code_snippet)
+
+    # Fallback heuristic for any other script or language (.r, .scala, .pl, etc.)
+    if ext not in [".py"]:
+        return _check_generic_exotic_imports(code_snippet, ext)
 
     # Default / Python (.py)
     return _check_python_imports(code_snippet)
@@ -200,6 +273,101 @@ def _check_cpp_imports(code: str) -> Tuple[bool, Optional[str]]:
         if os.path.exists("CMakeLists.txt") or os.path.exists("Makefile"):
             continue
         return False, f"GHOST_IMPORT_DETECTED: C/C++ header '<{header}>' is missing from standard library."
+    return True, None
+
+
+def _check_php_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates PHP use and require statements."""
+    php_uses = re.findall(r"(?:use|require_once|include_once)\s+['\"]?([a-zA-Z0-9_\\]+)['\"]?;?", code)
+    for p in php_uses:
+        root_ns = p.split("\\")[0].lower()
+        if root_ns in PHP_BUILTIN_EXTENSIONS or root_ns in ["app", "tests", "vendor"]:
+            continue
+        if os.path.exists("composer.json") or os.path.exists("vendor"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: PHP namespace/file '{p}' not found in standard extensions or composer.json."
+    return True, None
+
+
+def _check_ruby_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Ruby require statements."""
+    ruby_requires = re.findall(r"require\s+['\"]([^'\"]+)['\"]", code)
+    for r in ruby_requires:
+        if r in RUBY_STDLIB_MODULES or r.startswith("."):
+            continue
+        if os.path.exists("Gemfile") or os.path.exists("Gemfile.lock"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Ruby gem/module '{r}' not found in standard library or Gemfile."
+    return True, None
+
+
+def _check_csharp_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates C# using directives."""
+    cs_usings = re.findall(r"using\s+([a-zA-Z0-9_\.]+);", code)
+    for u in cs_usings:
+        root_ns = u.split(".")[0]
+        if root_ns in CSHARP_STDLIB_NAMESPACES:
+            continue
+        # If csproj or sln exists, allow project references
+        if any(f.endswith(".csproj") or f.endswith(".sln") for f in os.listdir(".")):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: C# namespace '{u}' not found in .NET standard base class library."
+    return True, None
+
+
+def _check_swift_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Swift import statements."""
+    swift_imports = re.findall(r"import\s+([a-zA-Z0-9_]+)", code)
+    for mod in swift_imports:
+        if mod in SWIFT_STDLIB_MODULES:
+            continue
+        if os.path.exists("Package.swift") or any(f.endswith(".xcodeproj") for f in os.listdir(".")):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Swift module '{mod}' not found in Apple SDK / Swift stdlib."
+    return True, None
+
+
+def _check_dart_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Dart / Flutter import statements."""
+    dart_imports = re.findall(r"import\s+['\"]([^'\"]+)['\"]", code)
+    for pkg in dart_imports:
+        if pkg.startswith("package:flutter") or any(pkg.startswith(p) for p in DART_STDLIB_PACKAGES) or pkg.startswith("."):
+            continue
+        if os.path.exists("pubspec.yaml"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Dart package '{pkg}' not found in core SDK or pubspec.yaml."
+    return True, None
+
+
+def _check_lua_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Lua require statements."""
+    lua_requires = re.findall(r"require\s*\(?['\"]([^'\"]+)['\"]\)?", code)
+    for mod in lua_requires:
+        if mod in LUA_STDLIB_MODULES or mod.startswith("."):
+            continue
+        if os.path.exists(f"{mod}.lua") or os.path.exists("rockspec"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Lua module '{mod}' not found in standard libraries or local file."
+    return True, None
+
+
+def _check_shell_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Shell / Bash source and dot-includes."""
+    sources = re.findall(r"(?:source|\.)\s+([^\s;&|]+)", code)
+    for s in sources:
+        if s.startswith("$") or s.startswith("`"):
+            continue  # Dynamic path variable
+        if not os.path.exists(s) and ("hallucin" in s.lower() or "fake" in s.lower() or "unreal" in s.lower()):
+            return False, f"GHOST_IMPORT_DETECTED: Shell source file '{s}' does not exist on disk."
+    return True, None
+
+
+def _check_generic_exotic_imports(code: str, ext: str) -> Tuple[bool, Optional[str]]:
+    """Generic heuristic fallback for exotic languages (Dart, Swift, Lua, Shell, etc.)."""
+    # Detect obviously hallucinated fake imports e.g. import "fake_hallucinated_..."
+    suspicious = re.findall(r"(?:import|require|using|include)\s+['\"<]?([a-zA-Z0-9_\-]*hallucin[a-zA-Z0-9_\-]*|uninstalled[a-zA-Z0-9_\-]*)['\">]?", code, re.IGNORECASE)
+    if suspicious:
+        return False, f"GHOST_IMPORT_DETECTED: Suspicious hallucinated module '{suspicious[0]}' detected in {ext} file."
     return True, None
 
 

@@ -70,7 +70,7 @@ Modern autonomous coding agents face catastrophic failure modes:
 | **6** | 🚨 **Egress Sniffer Probe** | `src/sentinel.py` | Scans patches for unauthorized phone-home connections. | Blocks trojans and telemetry data exfiltration in patches. |
 | **7** | 🔒 **Multi-Agent Mutex** | `src/watchdog.py` | Cooperative file lease locks across multiple agent sub-workers. | Stops concurrent agents from overwriting each other. |
 | **8** | 🪞 **Shadow Workspace** | `src/shadow.py` | Dry-runs patches inside an ephemeral clone directory. | Zero-risk experimentation; commits only after full validation. |
-| **9** | 👻 **AST Ghost Import Linter** | `src/guardian.py` | 0 ms Python AST check on newly added imports. | Blocks patches containing non-existent hallucinated packages. |
+| **9** | 👻 **Polyglot Ghost Import Linter** | `src/guardian.py` | 0 ms AST/heuristic check across Python, JS/TS, Go, Rust, Java/Kotlin, C/C++, PHP, Ruby, C#, Swift, Dart, Lua, Shell & exotic scripts. | Blocks patches containing non-existent hallucinated packages in any language. |
 | **10**| 🧪 **Regression Guard** | `src/guardian.py` | Runs project tests in sandbox before modifying files. | Prevents agents from breaking existing features. |
 | **11**| ⚖️ **Cross-Model Consensus** | `src/consensus.py` | Requires 2 independent models to agree on the root cause. | Eliminates single-model hallucination single-points-of-failure. |
 | **12**| ✂️ **Anti-Bloat Complexity** | `src/sentinel.py` | Monitors cyclomatic complexity to prevent code bloat. | Stops agents from writing 8-layer nested spaghetti code. |
