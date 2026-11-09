@@ -149,3 +149,43 @@ Yes! `git-oops` includes a deterministic offline diagnostic critic. You can test
 - All 20 defense modules (firewall, squeezer, AST linter, shadow workspace, etc.) run locally on your device.
 - All audit data (flight recorder, snapshots, and antibody patterns) is stored exclusively on your local disk at `~/.git_oops/`.
 - Secret redaction automatically masks all API keys and bearer credentials before any prompt reaches an LLM.
+
+### Q4: What happens if an AI Agent proposes a bad patch that breaks my code?
+You have two immediate safety nets:
+1. **Interactive Prompt**: In human mode, `git-oops` asks `[y/N]` before applying any patch.
+2. **Instant 1-Second Undo**: If a patch was applied, run `git-oops --undo <filepath>` to instantly revert to the pre-patch backup snapshot.
+3. **Flight Rewind**: In autonomous agent mode, run `git-oops --rewind <step_id>` to restore any past snapshot.
+
+### Q5: How do I change my daily API spending budget?
+You can temporarily adjust it with the `--budget` flag:
+```bash
+git-oops --file app.py --error "..." --budget 2.50
+```
+Or permanently save your budget limit so it applies to all future runs:
+```bash
+git-oops --set-budget 3.00
+```
+
+### Q6: How does the Anti-Thrashing Watchdog distinguish normal edits from infinite loops?
+`git-oops` calculates the SHA-256 cryptographic digest of every patch proposed per file. If an agent proposes the exact same patch or an immediate reverse toggle 3 times in a row, `git-oops` halts execution with `ANTI_THRASHING_HALT` to break the rabbit hole.
+
+### Q7: Can I use `git-oops` with other programming languages (JavaScript, Go, Rust)?
+Yes! While the AST Ghost-Import linter is currently specialized for Python, all other 19 defense modules — including the Blast-Radius Firewall, Context Log Squeezer, Secret Redactor, Shadow Workspace, Anti-Thrashing Watchdog, and Native MCP Server — work seamlessly across any language stack.
+
+### Q8: Where are local configurations and cache files stored?
+All files are housed strictly inside your operating system's local user home directory:
+- Configuration: `~/.git_oops/config.json`
+- Spend Ledger: `~/.git_oops/spend_ledger.json`
+- Deterministic Cache: `~/.git_oops/cache.json`
+- Blackbox Flight Events: `~/.git_oops/memory/flight_recorder.jsonl`
+- Antibody DB: `~/.git_oops/memory/antibodies.json`
+
+### Q9: Does `git-oops` require internet access?
+No. Aside from optional cloud REST calls to Gemini/Claude when you provide an API key, the entire core harness (firewall, squeezer, watchdog, linter, sandbox, and local cache) operates completely air-gapped without an internet connection.
+
+### Q10: How do I run `git-oops` in CI/CD pipelines (GitHub Actions, GitLab CI)?
+Pass the `--agent` (or `--json`) flag along with `--yes` to auto-apply validated fixes without prompting:
+```bash
+git-oops --agent --file src/main.py --error "$ERROR_LOG" --yes
+```
+It returns standard Unix exit codes (`0` for success, non-zero for blocked/failures) with clean JSON for CI loggers.
