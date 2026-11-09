@@ -170,21 +170,29 @@ git-oops --set-budget 3.00
 `git-oops` calculates the SHA-256 cryptographic digest of every patch proposed per file. If an agent proposes the exact same patch or an immediate reverse toggle 3 times in a row, `git-oops` halts execution with `ANTI_THRASHING_HALT` to break the rabbit hole.
 
 ### Q7: Can I use `git-oops` with other programming languages?
-Yes! 100% of all 20 defense modules are universally polyglot across any programming language:
-- **Python (`.py`)**: AST syntax tree traversal & runtime module spec lookup.
+Yes! 100% of all 20 defense modules are universally polyglot across **every single programming language and runtime ecosystem**:
+- **Python (`.py`)**: Native AST syntax tree traversal & runtime module spec lookup.
 - **JavaScript & TypeScript (`.js`, `.ts`, `.jsx`, `.tsx`, `.mjs`)**: Validates ES6 imports & CommonJS `require()` against Node.js built-ins, `package.json`, and `node_modules`.
 - **Go (`.go`)**: Validates package paths against standard library prefixes and `go.mod`.
 - **Rust (`.rs`)**: Validates crate `use` statements against standard crates (`std`, `core`, `alloc`) and `Cargo.toml`.
 - **Java & Kotlin (`.java`, `.kt`)**: Validates package imports against standard Java/Kotlin platform prefixes and build manifests.
 - **C & C++ (`.c`, `.cpp`, `.cc`, `.h`, `.hpp`)**: Validates `#include` headers against standard C/C++ STL headers.
-- **PHP (`.php`)**: Validates `use` / `require` against PHP core extensions, built-in classes, and `composer.json`.
+- **PHP (`.php`)**: Validates `use` / `require` against PHP core extensions, built-in classes (`PDO`, `DateTime`), and `composer.json`.
 - **Ruby (`.rb`)**: Validates `require` against Ruby standard library modules and `Gemfile`.
-- **C# / .NET (`.cs`)**: Validates `using` directives against .NET standard base class library namespaces (`System`, `Microsoft`) and `.csproj`.
+- **.NET Ecosystem (C#, F#, VB.NET - `.cs`, `.fs`, `.vb`)**: Validates `using`, `open`, `Imports` directives against .NET standard base class library namespaces (`System`, `Microsoft`, `Windows`, `FSharp`) and project references (`.csproj`, `.fsproj`, `.vbproj`, `.sln`).
 - **Swift (`.swift`)**: Validates `import` against Apple SDK & Swift stdlib (`Foundation`, `SwiftUI`, `Combine`, etc.) and `Package.swift`.
 - **Dart & Flutter (`.dart`)**: Validates `import` against core Dart SDK (`dart:*`), Flutter SDK (`package:flutter/*`), and `pubspec.yaml`.
+- **Scala (`.scala`, `.sc`)**: Validates `import` against Scala/Java stdlib and `build.sbt` / `pom.xml`.
+- **Elixir (`.ex`, `.exs`)**: Validates `alias`, `import`, `require`, `use` against Elixir standard modules and `mix.exs`.
+- **R (`.r`, `.R`)**: Validates `library()` / `require()` against base R packages and `DESCRIPTION`.
+- **Julia (`.jl`)**: Validates `using` / `import` against Julia standard libraries and `Project.toml`.
+- **Perl (`.pl`, `.pm`)**: Validates `use` / `require` against Perl core modules and `cpanfile`.
+- **Haskell (`.hs`, `.lhs`)**: Validates `import` against base Prelude/Data/Control packages and `.cabal` / `stack.yaml`.
+- **Zig (`.zig`)**: Validates `@import()` against builtin modules, local files, and `build.zig`.
+- **Nim (`.nim`)**: Validates `import` against Nim standard library modules and `.nimble`.
 - **Lua (`.lua`)**: Validates `require` against Lua standard libraries (`string`, `table`, `math`, `io`, etc.) and local module files.
 - **Shell / Bash (`.sh`, `.bash`, `.zsh`)**: Validates `source` and `.` file targets against existing filesystem paths.
-- **Exotic Scripts & Other Languages (`.r`, `.jl`, `.ex`, `.scala`, `.pl`)**: Universal heuristic scanner blocks obvious hallucination traps and non-existent dependencies.
+- **Other Languages & Exotic Scripts (`.clj`, `.erl`, `.d`, `.f90`, etc.)**: Universal fallback heuristic scanner automatically detects and blocks hallucinated/uninstalled modules.
 All other modules (Blast-Radius Firewall, Log Squeezer, Secret Redactor, Watchdog, Mutex, Shadow Sandbox, and Native MCP Server) operate completely language-agnostic across any codebase!
 
 ### Q8: Where are local configurations and cache files stored?

@@ -94,6 +94,51 @@ LUA_STDLIB_MODULES = {
     "string", "table", "math", "io", "os", "debug", "coroutine", "utf8", "package"
 }
 
+# Standard Scala packages
+SCALA_STDLIB_PREFIXES = {
+    "scala", "java", "javax"
+}
+
+# Standard Elixir modules
+ELIXIR_STDLIB_MODULES = {
+    "Enum", "String", "Map", "List", "File", "IO", "Path", "System", "Kernel",
+    "Task", "Agent", "GenServer", "Process", "Keyword", "Integer", "Float", "Stream", "Logger"
+}
+
+# Standard R packages
+R_BASE_PACKAGES = {
+    "base", "stats", "graphics", "grDevices", "utils", "datasets", "methods", "grid", "tools"
+}
+
+# Standard Julia modules
+JULIA_STDLIB_MODULES = {
+    "Base", "Core", "Dates", "Distributed", "LinearAlgebra", "Logging", "Markdown",
+    "Printf", "Random", "Serialization", "Sockets", "Test", "UUIDs", "Statistics"
+}
+
+# Standard Perl pragmas and core modules
+PERL_CORE_MODULES = {
+    "strict", "warnings", "utf8", "vars", "constant", "lib", "Exporter", "Carp",
+    "File::Spec", "File::Basename", "File::Path", "Data::Dumper", "Getopt::Long",
+    "Scalar::Util", "List::Util", "JSON", "Time::HiRes", "POSIX"
+}
+
+# Standard Haskell modules
+HASKELL_STDLIB_PREFIXES = {
+    "Prelude", "Data", "Control", "System", "Debug", "GHC", "Text", "Numeric", "Foreign"
+}
+
+# Standard Zig modules
+ZIG_BUILTIN_MODULES = {
+    "std", "builtin"
+}
+
+# Standard Nim modules
+NIM_STDLIB_MODULES = {
+    "strutils", "sequtils", "os", "tables", "json", "times", "math", "sugar",
+    "streams", "parseutils", "options", "uri", "httpclient", "asyncfutures", "asyncdispatch"
+}
+
 
 def check_ghost_imports(code_snippet: str, filepath: str = "app.py") -> Tuple[bool, Optional[str]]:
     """
@@ -150,7 +195,39 @@ def check_ghost_imports(code_snippet: str, filepath: str = "app.py") -> Tuple[bo
     if ext in [".sh", ".bash", ".zsh"]:
         return _check_shell_imports(code_snippet)
 
-    # Fallback heuristic for any other script or language (.r, .scala, .pl, etc.)
+    # Scala (.scala, .sc)
+    if ext in [".scala", ".sc"]:
+        return _check_scala_imports(code_snippet)
+
+    # Elixir (.ex, .exs)
+    if ext in [".ex", ".exs"]:
+        return _check_elixir_imports(code_snippet)
+
+    # R (.r, .R)
+    if ext in [".r"]:
+        return _check_r_imports(code_snippet)
+
+    # Julia (.jl)
+    if ext == ".jl":
+        return _check_julia_imports(code_snippet)
+
+    # Perl (.pl, .pm)
+    if ext in [".pl", ".pm"]:
+        return _check_perl_imports(code_snippet)
+
+    # Haskell (.hs, .lhs)
+    if ext in [".hs", ".lhs"]:
+        return _check_haskell_imports(code_snippet)
+
+    # Zig (.zig)
+    if ext == ".zig":
+        return _check_zig_imports(code_snippet)
+
+    # Nim (.nim)
+    if ext == ".nim":
+        return _check_nim_imports(code_snippet)
+
+    # Fallback heuristic for any other script or language (.clj, .erl, .d, .f90, etc.)
     if ext not in [".py"]:
         return _check_generic_exotic_imports(code_snippet, ext)
 
@@ -360,6 +437,105 @@ def _check_shell_imports(code: str) -> Tuple[bool, Optional[str]]:
             continue  # Dynamic path variable
         if not os.path.exists(s) and ("hallucin" in s.lower() or "fake" in s.lower() or "unreal" in s.lower()):
             return False, f"GHOST_IMPORT_DETECTED: Shell source file '{s}' does not exist on disk."
+    return True, None
+
+
+def _check_scala_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Scala import statements."""
+    scala_imports = re.findall(r"import\s+([a-zA-Z0-9_\.]+)", code)
+    for imp in scala_imports:
+        root_pkg = imp.split(".")[0]
+        if root_pkg in SCALA_STDLIB_PREFIXES:
+            continue
+        if os.path.exists("build.sbt") or os.path.exists("pom.xml"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Scala package '{imp}' not found in standard Scala SDK or build.sbt."
+    return True, None
+
+
+def _check_elixir_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Elixir alias, import, and require directives."""
+    elixir_matches = re.findall(r"(?:alias|import|require|use)\s+([a-zA-Z0-9_\.]+)", code)
+    for mod in elixir_matches:
+        root_mod = mod.split(".")[0]
+        if root_mod in ELIXIR_STDLIB_MODULES:
+            continue
+        if os.path.exists("mix.exs"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Elixir module '{mod}' not found in standard library or mix.exs."
+    return True, None
+
+
+def _check_r_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates R library() and require() calls."""
+    r_matches = re.findall(r"(?:library|require)\s*\(\s*['\"]?([a-zA-Z0-9_\.]+)['\"]?\s*\)", code)
+    for pkg in r_matches:
+        if pkg in R_BASE_PACKAGES:
+            continue
+        if os.path.exists("DESCRIPTION"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: R package '{pkg}' not found in base R or DESCRIPTION."
+    return True, None
+
+
+def _check_julia_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Julia using and import statements."""
+    julia_matches = re.findall(r"(?:using|import)\s+([a-zA-Z0-9_]+)", code)
+    for mod in julia_matches:
+        if mod in JULIA_STDLIB_MODULES:
+            continue
+        if os.path.exists("Project.toml"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Julia module '{mod}' not found in standard library or Project.toml."
+    return True, None
+
+
+def _check_perl_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Perl use and require statements."""
+    perl_matches = re.findall(r"(?:use|require)\s+([a-zA-Z0-9_:]+);?", code)
+    for mod in perl_matches:
+        if mod in PERL_CORE_MODULES or mod.startswith("5."):
+            continue
+        if os.path.exists("Makefile.PL") or os.path.exists("cpanfile"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Perl module '{mod}' not found in core Perl or cpanfile."
+    return True, None
+
+
+def _check_haskell_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Haskell import statements."""
+    hs_matches = re.findall(r"import\s+(?:qualified\s+)?([a-zA-Z0-9_\.]+)", code)
+    for mod in hs_matches:
+        root_mod = mod.split(".")[0]
+        if root_mod in HASKELL_STDLIB_PREFIXES:
+            continue
+        if any(f.endswith(".cabal") for f in os.listdir(".")) or os.path.exists("stack.yaml"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Haskell module '{mod}' not found in base packages or cabal."
+    return True, None
+
+
+def _check_zig_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Zig @import directives."""
+    zig_matches = re.findall(r"@import\s*\(\s*['\"]([^'\"]+)['\"]\s*\)", code)
+    for mod in zig_matches:
+        if mod in ZIG_BUILTIN_MODULES or mod.startswith(".") or mod.endswith(".zig"):
+            continue
+        if os.path.exists("build.zig.zon") or os.path.exists("build.zig"):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Zig module '{mod}' not found in builtin or build.zig."
+    return True, None
+
+
+def _check_nim_imports(code: str) -> Tuple[bool, Optional[str]]:
+    """Validates Nim import statements."""
+    nim_matches = re.findall(r"import\s+([a-zA-Z0-9_]+)", code)
+    for mod in nim_matches:
+        if mod in NIM_STDLIB_MODULES:
+            continue
+        if any(f.endswith(".nimble") for f in os.listdir(".")):
+            continue
+        return False, f"GHOST_IMPORT_DETECTED: Nim module '{mod}' not found in standard library or nimble file."
     return True, None
 
 

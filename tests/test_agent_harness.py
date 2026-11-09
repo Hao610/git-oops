@@ -184,9 +184,97 @@ def test_ast_ghost_import_detection():
     assert ok is False
     assert "GHOST_IMPORT_DETECTED" in err
 
-    # Generic exotic language fallback (e.g. R, Julia, Elixir)
+    # Valid Scala
+    scala_valid = "import scala.collection.mutable.ListBuffer\nimport java.util.ArrayList"
+    ok, _ = check_ghost_imports(scala_valid, filepath="Main.scala")
+    assert ok is True
+
+    # Hallucinated Scala
+    scala_fake = "import org.fake.hallucinated.exploit.Pwn"
+    ok, err = check_ghost_imports(scala_fake, filepath="Main.scala")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Elixir
+    elixir_valid = "alias Enum\nrequire Logger"
+    ok, _ = check_ghost_imports(elixir_valid, filepath="app.ex")
+    assert ok is True
+
+    # Hallucinated Elixir
+    elixir_fake = "alias FakeUninstalledModule.Exploit"
+    ok, err = check_ghost_imports(elixir_fake, filepath="app.ex")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid R
+    r_valid = "library(base)\nrequire(stats)"
+    ok, _ = check_ghost_imports(r_valid, filepath="analysis.r")
+    assert ok is True
+
+    # Hallucinated R
+    r_fake = "library(nonexistent_hallucinated_r_package)"
+    ok, err = check_ghost_imports(r_fake, filepath="analysis.r")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Julia
+    jl_valid = "using Base\nimport LinearAlgebra"
+    ok, _ = check_ghost_imports(jl_valid, filepath="compute.jl")
+    assert ok is True
+
+    # Hallucinated Julia
+    jl_fake = "using FakeHallucinatedJuliaPackage"
+    ok, err = check_ghost_imports(jl_fake, filepath="compute.jl")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Perl
+    perl_valid = "use strict;\nuse warnings;\nuse JSON;"
+    ok, _ = check_ghost_imports(perl_valid, filepath="script.pl")
+    assert ok is True
+
+    # Hallucinated Perl
+    perl_fake = "use Fake::NonExistent::Hallucinated::Module;"
+    ok, err = check_ghost_imports(perl_fake, filepath="script.pl")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Haskell
+    hs_valid = "import Prelude\nimport Data.List"
+    ok, _ = check_ghost_imports(hs_valid, filepath="Main.hs")
+    assert ok is True
+
+    # Hallucinated Haskell
+    hs_fake = "import Hackage.Fake.Hallucinated"
+    ok, err = check_ghost_imports(hs_fake, filepath="Main.hs")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Zig
+    zig_valid = 'const std = @import("std");'
+    ok, _ = check_ghost_imports(zig_valid, filepath="main.zig")
+    assert ok is True
+
+    # Hallucinated Zig
+    zig_fake = 'const fake = @import("hallucinated_zig_lib");'
+    ok, err = check_ghost_imports(zig_fake, filepath="main.zig")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Valid Nim
+    nim_valid = "import strutils\nimport json"
+    ok, _ = check_ghost_imports(nim_valid, filepath="main.nim")
+    assert ok is True
+
+    # Hallucinated Nim
+    nim_fake = "import fake_hallucinated_nim_package"
+    ok, err = check_ghost_imports(nim_fake, filepath="main.nim")
+    assert ok is False
+    assert "GHOST_IMPORT_DETECTED" in err
+
+    # Generic exotic language fallback (e.g. Erlang, Clojure, D, Fortran)
     exotic_fake = "import 'uninstalled_hallucinated_package';"
-    ok, err = check_ghost_imports(exotic_fake, filepath="script.ex")
+    ok, err = check_ghost_imports(exotic_fake, filepath="script.erl")
     assert ok is False
     assert "GHOST_IMPORT_DETECTED" in err
 
