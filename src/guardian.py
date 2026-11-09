@@ -72,9 +72,9 @@ RUBY_STDLIB_MODULES = {
     "pathname", "optparse", "singleton", "benchmark", "tempfile"
 }
 
-# Standard C# / .NET namespaces
-CSHARP_STDLIB_NAMESPACES = {
-    "System", "Microsoft", "Windows"
+# Standard .NET / C# / F# / VB.NET namespaces
+DOTNET_STDLIB_NAMESPACES = {
+    "System", "Microsoft", "Windows", "FSharp", "Internal"
 }
 
 # Standard Swift / Apple frameworks
@@ -130,9 +130,9 @@ def check_ghost_imports(code_snippet: str, filepath: str = "app.py") -> Tuple[bo
     if ext == ".rb":
         return _check_ruby_imports(code_snippet)
 
-    # C# / .NET (.cs)
-    if ext == ".cs":
-        return _check_csharp_imports(code_snippet)
+    # C# / F# / VB.NET / .NET (.cs, .fs, .vb)
+    if ext in [".cs", ".fs", ".vb"]:
+        return _check_dotnet_imports(code_snippet, ext)
 
     # Swift (.swift)
     if ext == ".swift":
@@ -301,17 +301,18 @@ def _check_ruby_imports(code: str) -> Tuple[bool, Optional[str]]:
     return True, None
 
 
-def _check_csharp_imports(code: str) -> Tuple[bool, Optional[str]]:
-    """Validates C# using directives."""
-    cs_usings = re.findall(r"using\s+([a-zA-Z0-9_\.]+);", code)
-    for u in cs_usings:
+def _check_dotnet_imports(code: str, ext: str) -> Tuple[bool, Optional[str]]:
+    """Validates .NET (C#, F#, VB.NET) using/open/Imports directives."""
+    # C# using X; F# open X; VB.NET Imports X
+    dotnet_matches = re.findall(r"(?:using|open|Imports)\s+([a-zA-Z0-9_\.]+);?", code)
+    for u in dotnet_matches:
         root_ns = u.split(".")[0]
-        if root_ns in CSHARP_STDLIB_NAMESPACES:
+        if root_ns in DOTNET_STDLIB_NAMESPACES:
             continue
-        # If csproj or sln exists, allow project references
-        if any(f.endswith(".csproj") or f.endswith(".sln") for f in os.listdir(".")):
+        # If any .NET project file or solution exists, allow project references
+        if any(f.endswith(".csproj") or f.endswith(".fsproj") or f.endswith(".vbproj") or f.endswith(".sln") for f in os.listdir(".")):
             continue
-        return False, f"GHOST_IMPORT_DETECTED: C# namespace '{u}' not found in .NET standard base class library."
+        return False, f"GHOST_IMPORT_DETECTED: .NET namespace '{u}' not found in .NET standard base class library (BCL)."
     return True, None
 
 

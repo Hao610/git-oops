@@ -132,12 +132,20 @@ def test_ast_ghost_import_detection():
     assert ok is False
     assert "GHOST_IMPORT_DETECTED" in err
 
-    # Valid C# namespace
+    # Valid .NET (C#, F#, VB.NET) namespace
     cs_valid = "using System;\nusing System.Collections.Generic;"
     ok, _ = check_ghost_imports(cs_valid, filepath="Program.cs")
     assert ok is True
 
-    # Hallucinated C# namespace
+    fs_valid = "open System\nopen FSharp.Core"
+    ok, _ = check_ghost_imports(fs_valid, filepath="Program.fs")
+    assert ok is True
+
+    vb_valid = "Imports System\nImports Microsoft.VisualBasic"
+    ok, _ = check_ghost_imports(vb_valid, filepath="Program.vb")
+    assert ok is True
+
+    # Hallucinated .NET namespace
     cs_fake = "using NonExistentFakeLib.SecurityExploits;"
     ok, err = check_ghost_imports(cs_fake, filepath="Program.cs")
     assert ok is False
