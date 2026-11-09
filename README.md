@@ -139,6 +139,16 @@ pytest tests -v
 
 ---
 
+## 🔒 100% Local & Privacy-First (Zero Telemetry)
+
+We believe developer tools should never spy on you or your AI agents:
+- **Zero Telemetry**: No tracking pixels, no user analytics, and zero remote logging.
+- **Air-Gapped Safety**: All firewalls, anti-thrashing heuristics, AST parsing, and secret redactors run **100% locally on your machine**.
+- **Data Sovereignty**: The blackbox flight recorder, antibody memory DB, and shadow sandboxes live strictly in `~/.git_oops/` in your local home directory.
+- **Credential Masking**: High-entropy strings, tokens, and keys are automatically sanitized before reaching any AI model.
+
+---
+
 ## 🤝 Documentation & Community
 
 - Check out the [Help & Beginner's Manual](HELP.md) for full MCP step-by-step screenshots and command references.
