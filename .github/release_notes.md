@@ -1,32 +1,40 @@
-# ⚡ git-oops v1.0.3: The Final Legend Edition
+# ⚡ git-oops v1.0.3.post1: The Final Legend Edition
 
-Welcome to **git-oops v1.0.3 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
+Welcome to **git-oops v1.0.3.post1 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
 
 ---
 
-### 🌟 What's New in v1.0.3:
-1. **Autonomous Boot & Silent Background Auto-Updater (Zero-Touch Maintenance)**:
+### 🌟 What's New in v1.0.3.post1:
+1. **Single-Letter Minimalist CLI Flags**:
+   - Upgraded all common workflows with lightning-fast 1-letter shortcuts:
+     - `-s` / `--status`: Check accumulated API spend & circuit breaker ceiling.
+     - `-v` / `--version`: Print active version and release edition.
+     - `-m` / `--mcp`: Start native Model Context Protocol server for AI agents.
+     - `-u` / `--undo`: Roll back last applied patch on target file.
+     - `-r` / `--run`: Run live command and auto-catch/synthesize repair for terminal crashes.
+     - `-a` / `--agent`: Emit machine-readable pure JSON for autonomous AI coding agents.
+2. **Autonomous Boot & Silent Background Auto-Updater (Zero-Touch Maintenance)**:
    - **Boot-Time Silent Upgrade**: Automatically registers an invisible, non-elevated background update task upon system startup. When your computer boots and connects to the internet, it silently upgrades `git-oops` to the latest release with zero popups and zero command executions required.
    - **Zero-Latency Daemon Self-Upgrade**: Routinely checks PyPI asynchronously in a non-blocking daemon thread on git operations. Automatically pulls downstream updates without ever requiring manual `pip install --upgrade`.
-2. **PyPI Cryptographic Provenance via PyPA Trusted Publishing (PEP 740)**:
+3. **PyPI Cryptographic Provenance via PyPA Trusted Publishing (PEP 740)**:
    - Upgraded package publishing to native GitHub Actions OIDC Trusted Publishing with Sigstore digital attestations, establishing permanent cryptographic verification on PyPI.
-3. **Universal Absolute Documentation Links for PyPI & Ecosystem Hubs**:
+4. **Universal Absolute Documentation Links for PyPI & Ecosystem Hubs**:
    - Converted all relative documentation links (`HELP.md`, `LEGAL.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `LICENSE`) to absolute GitHub URLs, ensuring 100% click-through accessibility directly from PyPI.
-4. **PyPI Camo Asset & Badge Rendering Fixes**:
+5. **PyPI Camo Asset & Badge Rendering Fixes**:
    - Upgraded hero banners and shields to absolute URLs compatible with PyPI Camo proxy, ensuring high-res visuals on PyPI without alt-text fallback.
-5. **PyPI Navigation Metadata (`[project.urls]`)**:
+6. **PyPI Navigation Metadata (`[project.urls]`)**:
    - Injected official metadata for Homepage, Documentation, Repository, Issues, and Releases into PyPI distribution packages.
-6. **Universal Multi-Agent Ecosystem Expansion**:
+7. **Universal Multi-Agent Ecosystem Expansion**:
    - Explicit first-class support and documentation for Antigravity (Google AGY), Qoder, Claude, Cursor, Windsurf, Codex, Devin, Copilot Workspace, Aider, Cline, and any CLI/IDE subshell agent.
-7. **Top-Level `git_oops` Module Namespace & `python -m git_oops` Support**:
+8. **Top-Level `git_oops` Module Namespace & `python -m git_oops` Support**:
    - Packaged with official top-level `git_oops` distribution namespace, preventing collision with generic `src/` modules.
    - Universal execution via `python -m git_oops` and `py -m git_oops`, making Windows usage 100% immune to Windows Smart App Control (SAC) or WDAC unsigned `.exe` launcher warnings.
-8. **Streamlined Zero-Fork Windows Git Hooks**:
+9. **Streamlined Zero-Fork Windows Git Hooks**:
    - Upgraded global pre-commit and pre-push hook shims to use Windows-native process substitution, eliminating MSYS2 fork contention on developer workstations.
 
 ---
 
-### 🏛️ The 10 Legendary Pillars of v1.0.3
+### 🏛️ The 10 Legendary Pillars of v1.0.3.post1
 
 1. **Universal Zero-Step Global Git Interception (`core.hooksPath`)**:
    - `pip install git-oops` immediately shields every repository on your workstation.
@@ -74,4 +82,4 @@ pip install git-oops
 
 *(Universal protection is active immediately across all local repositories on your computer.)*
 
-**Full Changelog**: https://github.com/Hao610/git-oops/commits/v1.0.3
+**Full Changelog**: https://github.com/Hao610/git-oops/commits/v1.0.3.post1

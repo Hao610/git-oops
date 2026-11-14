@@ -50,5 +50,22 @@ def test_background_self_upgrade_non_blocking():
 def test_cli_version_flag():
     import subprocess
     out = subprocess.check_output([sys.executable, "-m", "git_oops", "--version"], text=True)
-    assert "git-oops v1.0.3" in out
+    assert "git-oops v1.0.3.post1" in out
+
+
+def test_cli_status_short_flag():
+    import subprocess
+    out = subprocess.check_output([sys.executable, "-m", "git_oops", "-s"], text=True)
+    assert "CIRCUIT BREAKER METRICS" in out
+
+
+def test_cli_short_flags_registered():
+    import subprocess
+    out = subprocess.check_output([sys.executable, "-m", "git_oops", "-h"], text=True)
+    assert "-u UNDO" in out or "-u" in out
+    assert "-r RUN" in out or "-r" in out
+    assert "-m" in out
+    assert "-a" in out
+
+
 

@@ -91,20 +91,21 @@ Zero ANSI garbage, 100% reliable programmatic parsing across any autonomous agen
 ### 🧑‍💻 Human Mode (Interactive & Colorful)
 | Task | Command | Description |
 | :--- | :--- | :--- |
-| **Fix crash directly** | `git-oops --file app.py --error "..."` | Analyzes crash, roasts code, displays Git diff. |
-| **Run command & intercept crash**| `git-oops --run "python app.py"` | Executes command live, catches crash, and auto-fixes. |
-| **Undo last patch** | `git-oops --undo app.py` | Restores the file from its `.oops.bak` snapshot. |
-| **Check today's budget** | `git-oops --status` | Shows today's spend down to 5 decimals. |
+| **Check version** | `git-oops -v` / `--version` | Displays installed version string. |
+| **Fix crash directly** | `git-oops -f app.py -e "..."` | Analyzes crash, roasts code, displays Git diff. |
+| **Run command & intercept crash**| `git-oops -r "python app.py"` | Executes command live, catches crash, and auto-fixes. |
+| **Undo last patch** | `git-oops -u app.py` | Restores the file from its `.oops.bak` snapshot. |
+| **Check today's budget** | `git-oops -s` / `--status` | Shows today's spend down to 5 decimals. |
 | **Set daily spend budget** | `git-oops --set-budget 2.50` | Hard-caps API spending at $2.50 USD. |
 | **Set roast persona** | `git-oops --set-personality chef` | Locks in `chef`, `staff`, `kernel`, or `passive_aggressive`. |
 
 ### 🤖 Autonomous Agent Mode (Headless JSON & MCP)
 | Task | Command | Description |
 | :--- | :--- | :--- |
-| **Machine-Readable Mode** | `git-oops --agent --file app.py --error "..." --yes` | Emits pure JSON without ANSI colors for AI parsing. |
-| **Start MCP Server** | `git-oops --mcp` | Listens on stdio (JSON-RPC 2.0) for Claude, Cursor, Antigravity, Qoder, etc. |
-| **Shadow Sandbox Isolation** | `git-oops --shadow --file app.py --error "..."` | Dry-runs patch in an isolated temporary clone directory. |
-| **Dual-Model Consensus** | `git-oops --consensus --file app.py --error "..."` | Dispatches to two models; only patches if both agree. |
+| **Machine-Readable Mode** | `git-oops -a -f app.py -e "..." -y` | Emits pure JSON without ANSI colors for AI parsing (`-a` / `--agent`). |
+| **Start MCP Server** | `git-oops -m` / `--mcp` | Listens on stdio (JSON-RPC 2.0) for Claude, Cursor, Antigravity, Qoder, etc. |
+| **Shadow Sandbox Isolation** | `git-oops --shadow -f app.py -e "..."` | Dry-runs patch in an isolated temporary clone directory. |
+| **Dual-Model Consensus** | `git-oops --consensus -f app.py -e "..."` | Dispatches to two models; only patches if both agree. |
 | **View Flight Recorder** | `git-oops --flight-log` | Displays audit log of recent agent decisions. |
 | **Rewind Step** | `git-oops --rewind <step_id>` | Restores file state back to a previous snapshot step. |
 
