@@ -1,16 +1,20 @@
-# ⚡ git-oops v1.0.1: The Final Legend Edition
+# ⚡ git-oops v1.0.1.post1: The Final Legend Edition
 
-Welcome to **git-oops v1.0.1 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
+Welcome to **git-oops v1.0.1.post1 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
 
 ---
 
-### 🌟 What's New in v1.0.1:
-1. **Top-Level `git_oops` Module Namespace & `python -m git_oops` Support**:
+### 🌟 What's New in v1.0.1.post1:
+1. **Universal Absolute Documentation Links for PyPI & Ecosystem Hubs**:
+   - Converted all relative documentation links (`HELP.md`, `LEGAL.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `LICENSE`) to absolute GitHub URLs, ensuring 100% click-through accessibility directly from PyPI.
+2. **PyPI Camo Asset & Badge Rendering Fixes**:
+   - Upgraded hero banners and shields to absolute URLs compatible with PyPI Camo proxy, ensuring high-res visuals on PyPI without alt-text fallback.
+3. **PyPI Navigation Metadata (`[project.urls]`)**:
+   - Injected official metadata for Homepage, Documentation, Repository, Issues, and Releases into PyPI distribution packages.
+4. **Top-Level `git_oops` Module Namespace & `python -m git_oops` Support**:
    - Packaged with official top-level `git_oops` distribution namespace, preventing collision with generic `src/` modules.
-   - Adds universal support for running via `python -m git_oops` and `py -m git_oops`, making Windows usage 100% immune to Windows Smart App Control (SAC) or WDAC unsigned `.exe` launcher false positives.
-2. **PyPI Cryptographic Provenance & SLSA Attestations**:
-   - Official PyPA OIDC Sigstore build attestations guaranteeing cryptographic supply-chain verification on PyPI.
-3. **Streamlined Zero-Fork Windows Git Hooks**:
+   - Universal execution via `python -m git_oops` and `py -m git_oops`, making Windows usage 100% immune to Windows Smart App Control (SAC) or WDAC unsigned `.exe` launcher warnings.
+5. **Streamlined Zero-Fork Windows Git Hooks**:
    - Upgraded global pre-commit and pre-push hook shims to use Windows-native process substitution, eliminating MSYS2 fork contention on developer workstations.
 
 ---
@@ -19,7 +23,7 @@ Welcome to **git-oops v1.0.1 (The Final Legend Edition)** — the permanent, zer
 
 1. **Universal Zero-Step Global Git Interception (`core.hooksPath`)**:
    - `pip install git-oops` immediately shields every repository on your workstation.
-   - Zero manual hook setup. Automatically protects human developers and autonomous coding agents (Claude, Cursor, Devin) on every `git commit` and `git push`.
+   - Zero manual hook setup. Automatically protects human developers and all autonomous coding agents (Claude, Cursor, Devin, Antigravity, Qoder, Copilot, and any CLI/IDE agent) on every `git commit` and `git push`.
 
 2. **Sub-Second (<0.1s) L3 Local CI/CD Pre-Flight Engine**:
    - Replicates 100% of GitHub Cloud CI/CD security audits locally in milliseconds before commits touch the wire.

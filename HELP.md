@@ -32,7 +32,7 @@ git-oops --file broken.py --error "KeyError: 'user_id'"
 
 ---
 
-### Step 3: How to connect `git-oops` to Claude Desktop or Cursor (MCP Setup)
+### Step 3: How to connect `git-oops` to Any AI Agent (Claude, Cursor, Antigravity, Qoder, Windsurf, etc.)
 
 You don't need any networking knowledge. Modern AI assistants support **MCP (Model Context Protocol)**. Here is how to hook it up in 30 seconds:
 
@@ -102,7 +102,7 @@ Zero ANSI garbage, 100% reliable programmatic parsing across any autonomous agen
 | Task | Command | Description |
 | :--- | :--- | :--- |
 | **Machine-Readable Mode** | `git-oops --agent --file app.py --error "..." --yes` | Emits pure JSON without ANSI colors for AI parsing. |
-| **Start MCP Server** | `git-oops --mcp` | Listens on stdio (JSON-RPC 2.0) for Claude/Cursor. |
+| **Start MCP Server** | `git-oops --mcp` | Listens on stdio (JSON-RPC 2.0) for Claude, Cursor, Antigravity, Qoder, etc. |
 | **Shadow Sandbox Isolation** | `git-oops --shadow --file app.py --error "..."` | Dry-runs patch in an isolated temporary clone directory. |
 | **Dual-Model Consensus** | `git-oops --consensus --file app.py --error "..."` | Dispatches to two models; only patches if both agree. |
 | **View Flight Recorder** | `git-oops --flight-log` | Displays audit log of recent agent decisions. |

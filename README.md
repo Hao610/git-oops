@@ -5,20 +5,18 @@
 ### *The Zero-Step Autonomous AI Agent Safety Harness & Terminal Crash Interceptor.*
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
 
-<p align="center">
-  <img src="assets/readme-hero.jpg" alt="git-oops Hero Banner" width="850" style="border-radius: 10px; margin: 15px 0;" />
-</p>
+![git-oops Hero Banner](https://raw.githubusercontent.com/Hao610/git-oops/main/assets/readme-hero.jpg)
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/Release-v1.0.1%20Legend-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Version](https://img.shields.io/badge/Release-v1.0.1.post1%20Legend-blue.svg)](https://github.com/Hao610/git-oops/releases)
 [![PyPI](https://img.shields.io/pypi/v/git-oops.svg?color=blue)](https://pypi.org/project/git-oops/)
 [![Provenance](https://img.shields.io/badge/SLSA-Verified%20Provenance-brightgreen)](https://pypi.org/project/git-oops/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Hao610/git-oops/blob/main/LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python)](https://www.python.org/)
-[![Zero-Step-Hooks](https://img.shields.io/badge/Git%20Hooks-Zero--Step%20Global-success)]()
-[![L3-Preflight](https://img.shields.io/badge/L3%20CI%2FCD-%3C0.3s%20Local%20Pre--Flight-green)]()
-[![MCP-Ready](https://img.shields.io/badge/MCP-Native%20Server%20Ready-purple)]()
-[![Spend-Protection](https://img.shields.io/badge/Wallet-Circuit%20Breaker%20Protected-orange)]()
+[![Zero-Step-Hooks](https://img.shields.io/badge/Git%20Hooks-Zero--Step%20Global-success)](https://github.com/Hao610/git-oops)
+[![L3-Preflight](https://img.shields.io/badge/L3%20CI%2FCD-%3C0.3s%20Local%20Pre--Flight-green)](https://github.com/Hao610/git-oops)
+[![MCP-Ready](https://img.shields.io/badge/MCP-Native%20Server%20Ready-purple)](https://github.com/Hao610/git-oops)
+[![Spend-Protection](https://img.shields.io/badge/Wallet-Circuit%20Breaker%20Protected-orange)](https://github.com/Hao610/git-oops)
 
 </div>
 
@@ -30,7 +28,7 @@
 Your script crashes with a 50-line traceback. You're exhausted, and ChatGPT gives you a polite 6-paragraph email instead of a 2-line fix.
 `git-oops` roasts your sloppy code with razor-sharp wit and applies a surgical 1-click git patch directly in your terminal.
 
-### For AI Coding Agents (Claude, Cursor, Windsurf, Codex, Devin):
+### For All Autonomous AI Coding Agents (Antigravity, Claude, Cursor, Windsurf, Qoder, Codex, Devin, and any Agent):
 Modern autonomous coding agents face catastrophic failure modes:
 1. **Context Bloat**: Multi-thousand line terminal dumps overflow agent context windows.
 2. **Infinite Thrashing**: Agents get trapped in loops editing and reverting the same code.
@@ -67,7 +65,7 @@ Modern autonomous coding agents face catastrophic failure modes:
 | # | Capability | Module | What It Does | Why It Matters |
 | :-: | :--- | :--- | :--- | :--- |
 | **1** | 🧑‍💻 **Dual-Mode Engine** | `src/cli.py` | Human visual mode or `--agent` / `--json` headless mode. | Works equally well for human engineers and autonomous agents. |
-| **2** | 🔌 **Native MCP Server** | `src/mcp_server.py` | Exposes tools over stdio (`git-oops --mcp`). | Instantly attaches to Claude Desktop, Cursor, and Windsurf. |
+| **2** | 🔌 **Native MCP Server** | `src/mcp_server.py` | Exposes tools over stdio (`git-oops --mcp`). | Instantly attaches to Antigravity, Claude Desktop, Cursor, Windsurf, Qoder, and all MCP-compatible clients. |
 | **3** | 🛑 **Anti-Thrashing Watchdog** | `src/watchdog.py` | Detects repeated edit-revert oscillations (> 3 times). | Halts runaway agent loops before burning through credits. |
 | **4** | 🛡️ **Blast-Radius Firewall** | `src/firewall.py` | Intercepts `rm -rf`, `force-push`, and wildcard deletions. | Prevents rogue agents from wiping out the filesystem. |
 | **5** | 🕵️ **Supply-Chain Shield** | `src/firewall.py` | Blocks hallucinated/typosquatted package installs. | Protects against AI package hallucination attacks. |
@@ -115,7 +113,7 @@ git-oops --hud
 
 ### 3. Connect to Any AI Tool (MCP or Subshell):
 
-#### Option A: For Claude Desktop / Cursor / Windsurf / Antigravity (MCP):
+#### Option A: For Antigravity, Claude Desktop, Cursor, Windsurf, Qoder & All MCP Agents:
 Add this to your MCP configuration:
 ```json
 {
@@ -128,7 +126,7 @@ Add this to your MCP configuration:
 }
 ```
 
-#### Option B: For OpenAI Codex / Qoder / Copilot / Aider / Devin:
+#### Option B: For Any Subshell / CLI AI Agent (Codex, Devin, Copilot, Aider, Roo Code, Cline, etc.):
 Simply tell your agent in prompt or rule:
 > *"Always diagnose and apply patches safely via: `git-oops --agent --file <file> --error \"<error>\" --yes`"*
 It outputs clean machine-readable JSON without ANSI codes.
@@ -179,8 +177,8 @@ We believe developer tools should never spy on you or your AI agents:
 
 ## 🤝 Documentation & Community
 
-- Check out the [Help & Beginner's Manual](HELP.md) for full MCP step-by-step screenshots and command references.
-- Review our [Legal Terms & Disclaimer](LEGAL.md) for licensing, privacy, and autonomous agent safety notices.
-- Read our [Contributing Guidelines](CONTRIBUTING.md) to set up your environment.
-- Review our [Code of Conduct](CODE_OF_CONDUCT.md).
-- To report security vulnerabilities privately, please review [SECURITY.md](SECURITY.md).
+- Check out the [Help & Beginner's Manual](https://github.com/Hao610/git-oops/blob/main/HELP.md) for full MCP step-by-step screenshots and command references.
+- Review our [Legal Terms & Disclaimer](https://github.com/Hao610/git-oops/blob/main/LEGAL.md) for licensing, privacy, and autonomous agent safety notices.
+- Read our [Contributing Guidelines](https://github.com/Hao610/git-oops/blob/main/CONTRIBUTING.md) to set up your environment.
+- Review our [Code of Conduct](https://github.com/Hao610/git-oops/blob/main/CODE_OF_CONDUCT.md).
+- To report security vulnerabilities privately, please review [SECURITY.md](https://github.com/Hao610/git-oops/blob/main/SECURITY.md).

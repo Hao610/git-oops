@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "git-oops"
-version = "1.0.1"
+version = "1.0.1.post1"
 description = "The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness (The Final Legend Edition)."
 readme = "README.md"
 authors = [{ name = "Hao" }]
@@ -14,6 +14,13 @@ dependencies = [
     "requests>=2.28.0",
     "pytest>=7.0.0"
 ]
+
+[project.urls]
+Homepage = "https://github.com/Hao610/git-oops"
+Documentation = "https://github.com/Hao610/git-oops#readme"
+Repository = "https://github.com/Hao610/git-oops"
+"Bug Tracker" = "https://github.com/Hao610/git-oops/issues"
+Changelog = "https://github.com/Hao610/git-oops/releases"
 
 [project.scripts]
 git-oops = "git_oops.cli:main"

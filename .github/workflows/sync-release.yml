@@ -32,7 +32,7 @@ jobs:
             TARGET_TAG=$(git tag -l "v*" | sort -V | tail -n 1)
           fi
           if [ -z "$TARGET_TAG" ]; then
-            TARGET_TAG="v1.0.1"
+            TARGET_TAG="v1.0.1.post1"
           fi
           
           echo "Target Release Tag determined dynamically: $TARGET_TAG"
