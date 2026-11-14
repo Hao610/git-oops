@@ -55,4 +55,5 @@ We believe developer tools must respect privacy:
 - **Python** is a registered trademark of the Python Software Foundation.
 - **GitHub** is a registered trademark of GitHub, Inc.
 - **OpenAI**, **Anthropic**, **Google**, **Claude**, **Cursor**, **Windsurf**, and **PyPI** are trademarks or registered trademarks of their respective owners.
+- **Kaggle** is a trademark of Kaggle Inc. / Google LLC. This project is completely independent and has zero affiliation, endorsement, sponsorship, or association with Kaggle or Google LLC.
 - Reference to any third-party products, services, or trademarks is solely for nominative identification, compatibility purposes, and interoperability reference, and does not imply endorsement or affiliation.
