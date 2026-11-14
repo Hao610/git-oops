@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "git-oops"
-version = "0.2.0"
-description = "The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness."
+version = "1.0.0"
+description = "The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness (The Final Legend Edition)."
 readme = "README.md"
 authors = [{ name = "Hao" }]
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.9"
 dependencies = [
     "requests>=2.28.0",

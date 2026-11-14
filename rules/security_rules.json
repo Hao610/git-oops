@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0-ota",
+  "description": "Dynamic Git-Oops L3 Security Signatures and Rule Definitions",
+  "last_updated": 1731550000,
+  "secret_patterns": [
+    {
+      "pattern": "(?i)(?:api[_-]?key|secret|password|passwd|auth[_-]?token)\\s*[:=]\\s*['\\\"]([a-zA-Z0-9_\\-\\.]{16,})['\\\"]",
+      "label": "Exposed Secret Literal",
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern": "(?i)sk-[a-zA-Z0-9]{32,}",
+      "label": "OpenAI API Key",
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern": "(?i)AKIA[0-9A-Z]{16}",
+      "label": "AWS Access Key ID",
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern": "(?i)ghp_[a-zA-Z0-9]{36}",
+      "label": "GitHub Personal Access Token",
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern": "(?i)xox[baprs]-[0-9a-zA-Z]{10,48}",
+      "label": "Slack OAuth Token",
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern": "-----BEGIN (?:RSA|OPENSSH|DSA|EC|PGP)? PRIVATE KEY-----",
+      "label": "Cryptographic Private Key",
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern": "(?i)hf_[a-zA-Z0-9]{34}",
+      "label": "HuggingFace Access Token",
+      "severity": "CRITICAL"
+    },
+    {
+      "pattern": "(?i)AIza[0-9A-Za-z\\-_]{35}",
+      "label": "Google AI / Cloud API Key",
+      "severity": "CRITICAL"
+    }
+  ],
+  "malicious_packages": [
+    "reqeusts",
+    "colorma",
+    "djagno",
+    "falsk",
+    "beautiflsoup",
+    "cryptograpy",
+    "numpay",
+    "scipyy",
+    "pandass",
+    "tensoflow",
+    "pytocrh",
+    "opencvv",
+    "selenuim",
+    "urlib3",
+    "certifii",
+    "python-dateutill",
+    "jinja3",
+    "weberror"
+  ],
+  "cwe_thresholds": {
+    "max_cyclomatic_complexity": 10,
+    "shannon_entropy_threshold": 4.6
+  }
+}

@@ -6,6 +6,7 @@ We release patches and security updates for the current major branch.
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.0.x   | :white_check_mark: |
 | 0.2.x   | :white_check_mark: |
 | 0.1.x   | :white_check_mark: |
 

@@ -6,8 +6,8 @@ except ImportError:
 
 setup(
     name="git-oops",
-    version="0.2.0",
-    description="The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness.",
+    version="1.0.0",
+    description="The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness (The Final Legend Edition).",
     author="Hao",
     packages=find_packages(),
     install_requires=[

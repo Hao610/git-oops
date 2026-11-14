@@ -23,11 +23,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-          # Automatically extract the latest version tag (e.g. v1.0.0, v0.2.0)
-          # Fallback to v0.2.0 if no tags found
-          TARGET_TAG=$(git tag -l "v*" | sort -V | tail -n 1)
+          # Extract authoritative project version directly from pyproject.toml
+          PROJECT_VER=$(grep -m1 '^version' pyproject.toml | cut -d'"' -f2)
+          if [ -n "$PROJECT_VER" ]; then
+            TARGET_TAG="v$PROJECT_VER"
+          else
+            TARGET_TAG=$(git tag -l "v*" | sort -V | tail -n 1)
+          fi
           if [ -z "$TARGET_TAG" ]; then
-            TARGET_TAG="v0.2.0"
+            TARGET_TAG="v1.0.0"
           fi
           
           echo "Target Release Tag determined dynamically: $TARGET_TAG"
@@ -42,5 +46,30 @@ jobs:
             gh release edit "$TARGET_TAG" --target "$GITHUB_SHA" --notes-file .github/release_notes.md --draft=false
           else
             echo "Release $TARGET_TAG does not exist, creating dynamically..."
-            gh release create "$TARGET_TAG" --title "⚡ git-oops $TARGET_TAG: The Eternal Edition" --notes-file .github/release_notes.md --target "$GITHUB_SHA" --draft=false
+            gh release create "$TARGET_TAG" --title "⚡ git-oops $TARGET_TAG: The Final Legend Edition" --notes-file .github/release_notes.md --target "$GITHUB_SHA" --draft=false
           fi
+
+      - name: Set up Python for PyPI Packaging
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build sdist and universal wheel
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m build
+
+      - name: Attach Distribution Artifacts to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PROJECT_VER=$(grep -m1 '^version' pyproject.toml | cut -d'"' -f2)
+          TARGET_TAG="v$PROJECT_VER"
+          gh release upload "$TARGET_TAG" dist/* --clobber
+
+      - name: Publish Official Package to PyPI
+        if: env.PYPI_API_TOKEN != ''
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload --skip-existing dist/* -u __token__ -p "$PYPI_API_TOKEN"

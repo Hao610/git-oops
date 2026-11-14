@@ -32,6 +32,17 @@ from src.mcp_server import run_mcp_server
 from src.shadow import ShadowWorkspace
 from src.consensus import arbitrate_consensus
 from src.sentinel import check_egress_security, check_license_taint, check_code_complexity, IntentPrefetchEngine
+from src.hud import start_hud_server
+from src.hooks import run_l3_preflight, run_pre_push_check, setup_global_hooks, ensure_auto_hooks
+from src.rules import trigger_ota_update_background, sync_security_rules_foreground
+from src.replay import inspect_crash_snapshot
+from src.salvage import run_reflog_autopsy
+from src.solver import solve_with_ast
+from src.supply_chain import scan_dependencies_file
+from src.reviewer import review_pull_request, format_pr_review_markdown
+from src.hardware import get_hardware_telemetry
+from src.tester import synthesize_regression_test
+from src.local_llm import probe_local_llm, call_local_llm
 from src.ui import (
     print_banner,
     draw_card,
@@ -74,7 +85,142 @@ def main():
     parser.add_argument("--shadow", help="Run repair verification inside an isolated temporary shadow workspace", action="store_true")
     parser.add_argument("--consensus", help="Multi-LLM cross-arbitration: require two models to reach consensus before patching", action="store_true")
 
+    parser.add_argument("--hud", help="Start Obsidian Glassmorphism Web HUD server", action="store_true")
+    parser.add_argument("--pre-commit", help="Execute sub-second L3 pre-commit security pre-flight", action="store_true")
+    parser.add_argument("--pre-push", help="Execute pre-push branch and outgoing commit verification", action="store_true")
+    parser.add_argument("--install-hooks", help="Force install machine-wide git hooks via core.hooksPath", action="store_true")
+    parser.add_argument("--replay", help="Inspect crash variable snapshot (e.g. --replay crash_123.json)", default=None)
+    parser.add_argument("--salvage", help="Execute git reflog autopsy to rescue lost commits", action="store_true")
+    parser.add_argument("--solver", help="Zero-AI 1ms deterministic AST symbolic crash solver", action="store_true")
+    parser.add_argument("--supply-chain", help="Audit dependencies file for typosquatting & vulnerabilities", default=None)
+    parser.add_argument("--review-pr", help="Pre-PR gatekeeper audit against target branch (default: origin/main)", nargs="?", const="DEFAULT", default=None)
+    parser.add_argument("--hardware", help="Display hardware telemetry and CPU throttling metrics", action="store_true")
+    parser.add_argument("--test-gen", help="Generate permanent regression test for error", action="store_true")
+    parser.add_argument("--local", "--ollama", dest="local_mode", help="Use local offline LLM (Ollama/vLLM) instead of cloud APIs", action="store_true")
+    parser.add_argument("--update-rules", help="Force OTA update of L3 dynamic security rules", action="store_true")
+
     args = parser.parse_args()
+
+    # Zero-step background bootstrap: auto-hooks & OTA rules
+    ensure_auto_hooks()
+    trigger_ota_update_background()
+
+    # Force OTA rule update
+    if args.update_rules:
+        ok, msg = sync_security_rules_foreground(force=True)
+        if args.agent_mode:
+            print(json.dumps({"success": ok, "message": msg}))
+        else:
+            print_banner()
+            draw_card("DYNAMIC OTA SECURITY RULES", msg, color_border=FG_GREEN if ok else FG_YELLOW, color_title=FG_GREEN if ok else FG_YELLOW)
+        return
+
+    # Obsidian Web HUD Mode
+    if args.hud:
+        start_hud_server()
+        return
+
+    # L3 Pre-Commit Hook Mode
+    if args.pre_commit:
+        passed, violations, report = run_l3_preflight()
+        if args.agent_mode:
+            print(json.dumps({"passed": passed, "violations_count": len(violations), "violations": violations}))
+        else:
+            print(report)
+        sys.exit(0 if passed else 1)
+
+    # Pre-Push Hook Mode
+    if args.pre_push:
+        passed, report = run_pre_push_check()
+        if args.agent_mode:
+            print(json.dumps({"passed": passed, "report": report}))
+        else:
+            print(report)
+        sys.exit(0 if passed else 1)
+
+    # Force Install Hooks
+    if args.install_hooks:
+        ok, msg = setup_global_hooks(force=True)
+        if args.agent_mode:
+            print(json.dumps({"success": ok, "message": msg}))
+        else:
+            print_banner()
+            draw_card("GLOBAL GIT HOOKS", msg, color_border=FG_GREEN if ok else FG_RED, color_title=FG_GREEN if ok else FG_RED)
+        return
+
+    # Replay Crash Snapshot
+    if args.replay:
+        snap = inspect_crash_snapshot(args.replay)
+        if args.agent_mode:
+            print(json.dumps(snap))
+        else:
+            print_banner()
+            if snap.get("status") == "NOT_FOUND":
+                draw_card("CRASH REPLAY", f"Snapshot '{args.replay}' not found.", color_border=FG_RED, color_title=FG_RED)
+            else:
+                body = f"Timestamp: {snap.get('timestamp')}\nTarget: {snap.get('target_file')}\nException: {snap.get('exception_type')}: {snap.get('exception_message')}\n\nLocal Variables:\n{json.dumps(snap.get('local_variables', {}), indent=2)}"
+                draw_card("CRASH REPLAY TIME MACHINE", body, color_border=FG_CYAN, color_title=FG_CYAN)
+        return
+
+    # Reflog Salvage Autopsy
+    if args.salvage:
+        recovered = run_reflog_autopsy()
+        if args.agent_mode:
+            print(json.dumps({"recovered_count": len(recovered), "commits": recovered}))
+        else:
+            print_banner()
+            if recovered:
+                commits_str = "\n".join([f"• [{c['sha'][:7]}] {c['subject']} (Lost at: {c['reflog_action']})" for c in recovered[:10]])
+                draw_card("REFLOG AUTOPSY RESCUE", f"Rescued {len(recovered)} lost commit snapshots:\n\n{commits_str}", color_border=FG_GREEN, color_title=FG_GREEN)
+            else:
+                draw_card("REFLOG AUTOPSY", "No lost or orphaned commits detected in reflog.", color_border=FG_CYAN, color_title=FG_CYAN)
+        return
+
+    # Supply Chain Audit
+    if args.supply_chain:
+        results = scan_dependencies_file(args.supply_chain)
+        if args.agent_mode:
+            print(json.dumps(results))
+        else:
+            print_banner()
+            res_str = f"Scanned {results['scanned_packages_count']} dependencies in '{args.supply_chain}'.\n\n"
+            if results["violations"]:
+                res_str += "🚨 VIOLATIONS DETECTED:\n" + "\n".join([f"• {v['package']}: {v['details']}" for v in results["violations"]])
+                draw_card("SUPPLY CHAIN SECURITY ALERT", res_str, color_border=FG_RED, color_title=FG_RED)
+            else:
+                res_str += "✅ Zero typosquatting or malicious packages detected."
+                draw_card("SUPPLY CHAIN SECURITY PASSED", res_str, color_border=FG_GREEN, color_title=FG_GREEN)
+        return
+
+    # Pre-PR Gatekeeper Review
+    if args.review_pr is not None:
+        target_b = None if args.review_pr == "DEFAULT" else args.review_pr
+        report = review_pull_request(target_b)
+        if args.agent_mode:
+            print(json.dumps(report))
+        else:
+            print_banner()
+            md = format_pr_review_markdown(report)
+            border_c = FG_GREEN if report["verdict"] == "APPROVED" else (FG_YELLOW if report["verdict"] == "WARNINGS" else FG_RED)
+            draw_card("PRE-PR GATEKEEPER AUDIT", md, color_border=border_c, color_title=border_c)
+        return
+
+    # Hardware Telemetry
+    if args.hardware:
+        hw = get_hardware_telemetry()
+        if args.agent_mode:
+            print(json.dumps(hw))
+        else:
+            print_banner()
+            b_text = f"{hw['battery_percent']}%" if hw['battery_percent'] else "N/A"
+            hw_str = (
+                f"Operating System  : {hw['platform']}\n"
+                f"Battery Level     : {b_text} (Plugged in: {hw['power_plugged']})\n"
+                f"Process Priority  : {hw['process_priority']}\n"
+                f"Throttle Active   : {'YES' if hw['is_throttled'] else 'NO'}"
+            )
+            draw_card("HARDWARE & THROTTLE TELEMETRY", hw_str, color_border=FG_CYAN, color_title=FG_CYAN)
+        return
 
     # MCP Server Mode
     if args.mcp:
@@ -225,24 +371,34 @@ def main():
         spin_task(f"Invoking critic persona '{args.personality.upper()}'...", duration=0.5)
     
     try:
-        if args.consensus:
-            reached, diagnosis, arb_summary = arbitrate_consensus(
-                error_log=args.error,
-                file_context=file_content,
-                target_filepath=filepath,
-                budget_limit_usd=args.budget
-            )
-            if not args.agent_mode:
-                border_c = FG_GREEN if reached else FG_YELLOW
-                draw_card("CROSS-MODEL ARBITRATION CONSENSUS", arb_summary, color_border=border_c, color_title=border_c)
-        else:
-            diagnosis = diagnose_and_patch(
-                error_log=args.error,
-                file_context=file_content,
-                target_filepath=filepath,
-                personality=args.personality,
-                budget_limit_usd=args.budget
-            )
+        # 1. Check Zero-AI Deterministic AST Solver first if requested or applicable
+        solved_ast = False
+        if args.solver:
+            solved_ast, sym_diag = solve_with_ast(file_content, args.error)
+            if solved_ast and sym_diag:
+                diagnosis = sym_diag
+                if not args.agent_mode:
+                    draw_card("1MS DETERMINISTIC AST SYMBOLIC SOLVER", "Resolved crash deterministically in 1ms with ZERO LLM queries & zero token cost.", color_border=FG_GREEN, color_title=FG_GREEN)
+
+        if not solved_ast:
+            if args.consensus:
+                reached, diagnosis, arb_summary = arbitrate_consensus(
+                    error_log=args.error,
+                    file_context=file_content,
+                    target_filepath=filepath,
+                    budget_limit_usd=args.budget
+                )
+                if not args.agent_mode:
+                    border_c = FG_GREEN if reached else FG_YELLOW
+                    draw_card("CROSS-MODEL ARBITRATION CONSENSUS", arb_summary, color_border=border_c, color_title=border_c)
+            else:
+                diagnosis = diagnose_and_patch(
+                    error_log=args.error,
+                    file_context=file_content,
+                    target_filepath=filepath,
+                    personality=args.personality,
+                    budget_limit_usd=args.budget
+                )
     except PermissionError as pe:
         if args.agent_mode:
             print(json.dumps({"error": "CIRCUIT_BREAKER_TRIGGERED", "details": str(pe)}))
@@ -374,6 +530,9 @@ def main():
         applied = apply_patch_to_file(filepath, diagnosis['original_snippet'], diagnosis['fixed_snippet'])
         if applied:
             draw_card("PATCH APPLIED SUCCESSFULLY", f"File '{filepath}' updated safely.\nRun `git-oops --undo {filepath}` if you wish to roll back.", color_border=FG_GREEN, color_title=FG_GREEN)
+            if args.test_gen:
+                tpath = synthesize_regression_test(filepath, args.error, diagnosis['fixed_snippet'])
+                draw_card("REGRESSION TEST SYNTHESIZED", f"Synthesized permanent regression test: {tpath}", color_border=FG_GREEN, color_title=FG_GREEN)
         else:
             draw_card("PATCH APPLICATION FAILED", "Original snippet did not match cleanly.", color_border=FG_RED, color_title=FG_RED)
     else:
@@ -383,6 +542,9 @@ def main():
             if applied:
                 print("")
                 draw_card("PATCH APPLIED SUCCESSFULLY", f"File '{filepath}' updated safely.\nRun `git-oops --undo {filepath}` if you wish to roll back.", color_border=FG_GREEN, color_title=FG_GREEN)
+                if args.test_gen:
+                    tpath = synthesize_regression_test(filepath, args.error, diagnosis['fixed_snippet'])
+                    draw_card("REGRESSION TEST SYNTHESIZED", f"Synthesized permanent regression test: {tpath}", color_border=FG_GREEN, color_title=FG_GREEN)
             else:
                 print("")
                 draw_card("PATCH APPLICATION FAILED", "Original snippet could not be matched cleanly in file.", color_border=FG_RED, color_title=FG_RED)

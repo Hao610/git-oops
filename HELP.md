@@ -221,6 +221,74 @@ Standard linters check formatting and known syntax errors on static code, but th
 4. Don't provide an isolated shadow workspace or multi-agent concurrency mutex locks.
 `git-oops` is an active **runtime safety harness and autonomous supervisor** specifically built for the era of AI coding agents.
 
+### Q13: What new features and flags are available in v1.0.0 (The Final Legend Edition)?
+v1.0.0 introduces zero-configuration global protection and powerful new commands:
+- **`git-oops --hud`**: Launches the Obsidian Glassmorphism Web HUD (`http://localhost:8443`) for real-time telemetry.
+- **`git-oops --pre-commit`**: Manually executes the sub-second (<0.3s) L3 local CI/CD security pre-flight check.
+- **`git-oops --pre-push`**: Verifies branch protection and checks outgoing commits before pushing.
+- **`git-oops --solver`**: 1ms zero-AI symbolic deterministic crash solver ($0.00 cost, 0 tokens).
+- **`git-oops --salvage`**: Git reflog autopsy to resurrect lost commits after an agent disaster.
+- **`git-oops --replay`**: Post-mortem crash inspector reconstructing local scope variables.
+- **`git-oops --review-pr`**: Pre-PR staff gatekeeper auditing changes against main.
+- **`git-oops --hardware`**: Checks battery, thermal state, and process CPU throttling.
+- **`git-oops --local`**: Routes repairs to local Ollama/vLLM for 100% offline air-gapped operation.
+- **`git-oops --update-rules`**: Forces an immediate OTA sync of latest CVEs and security signatures.
+
+### Q14: How can I add extra custom security rules or CI/CD checks after `pip install git-oops`?
+`git-oops` implements an **Immutable Baseline + Additive Custom Policy** architecture:
+- **Built-in Security Baseline is Permanent**: Core checks (SQL injection, command injection, arbitrary eval, secret token leaks, typosquatted package attacks) are hardcoded and non-deletable to guarantee repository integrity.
+- **You Can Freely Add Custom Rules & Extra CI/CD**: You can seamlessly add your own team's private rules without modifying any code.
+
+#### Option 1: Add Custom Rules Declaratively (`.oops-rules.json`)
+Create a file named `.oops-rules.json` (or `.oops/rules.json`) in your repository root:
+```json
+{
+  "extra_secret_patterns": [
+    {
+      "pattern": "CORP-[0-9]{8}-[A-Z]{4}",
+      "label": "Internal Company Secret Token",
+      "severity": "CRITICAL"
+    }
+  ],
+  "extra_banned_packages": [
+    "unapproved-internal-sdk",
+    "deprecated-logging-lib"
+  ],
+  "extra_forbidden_calls": [
+    "pickle.loads",
+    "yaml.load"
+  ]
+}
+```
+Whenever anyone (human or AI agent) runs `git commit` or `git-oops --pre-commit`:
+- Your custom secret patterns are automatically scanned.
+- Any banned package listed in dependencies is blocked.
+- Any invocation of forbidden functions (like `pickle.loads`) is halted by the AST static analyzer.
+
+#### Option 2: Add Custom CI/CD Scripts (`.oops/check.py` or `.oops/check.sh`)
+If your project needs custom linting (e.g. `ruff`, `black`), compilation checks, or proprietary tests on every commit:
+1. Create a file `.oops/check.py` (or `.oops/check.sh`):
+```python
+# .oops/check.py
+import sys
+import subprocess
+
+print("Running custom team format audit...")
+res = subprocess.run(["ruff", "check", "."], capture_output=True)
+if res.returncode != 0:
+    print("Ruff lint failed!")
+    sys.exit(1)
+sys.exit(0)
+```
+2. When you `git commit`, `git-oops` runs its sub-second L3 security check first. If clean, it automatically executes your custom `.oops/check.py`. If your script exits with non-zero code, the commit is blocked!
+
+#### Option 3: Global Machine-Wide Custom Rules (`~/.git_oops/rules/custom_rules.json`)
+If you want your custom rules to apply to **every single Git repository** on your computer, put them in:
+- `~/.git_oops/rules/custom_rules.json`
+`git-oops` will automatically apply them globally.
+
+---
+
 ### Q12: Can I customize the roasting style or turn it off entirely?
 Yes! Use `--set-personality <type>` to switch between:
 - `chef`: Sarcastic, high-standards restaurant kitchen head chef.
