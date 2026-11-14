@@ -1,29 +1,32 @@
-# ⚡ git-oops v1.0.1.post2: The Final Legend Edition
+# ⚡ git-oops v1.0.3: The Final Legend Edition
 
-Welcome to **git-oops v1.0.1.post2 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
+Welcome to **git-oops v1.0.3 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
 
 ---
 
-### 🌟 What's New in v1.0.1.post2:
-1. **PyPI Cryptographic Provenance via PyPA Trusted Publishing (PEP 740)**:
+### 🌟 What's New in v1.0.3:
+1. **Autonomous Boot & Silent Background Auto-Updater (Zero-Touch Maintenance)**:
+   - **Boot-Time Silent Upgrade**: Automatically registers an invisible, non-elevated background update task upon system startup. When your computer boots and connects to the internet, it silently upgrades `git-oops` to the latest release with zero popups and zero command executions required.
+   - **Zero-Latency Daemon Self-Upgrade**: Routinely checks PyPI asynchronously in a non-blocking daemon thread on git operations. Automatically pulls downstream updates without ever requiring manual `pip install --upgrade`.
+2. **PyPI Cryptographic Provenance via PyPA Trusted Publishing (PEP 740)**:
    - Upgraded package publishing to native GitHub Actions OIDC Trusted Publishing with Sigstore digital attestations, establishing permanent cryptographic verification on PyPI.
-2. **Universal Absolute Documentation Links for PyPI & Ecosystem Hubs**:
+3. **Universal Absolute Documentation Links for PyPI & Ecosystem Hubs**:
    - Converted all relative documentation links (`HELP.md`, `LEGAL.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `LICENSE`) to absolute GitHub URLs, ensuring 100% click-through accessibility directly from PyPI.
-3. **PyPI Camo Asset & Badge Rendering Fixes**:
+4. **PyPI Camo Asset & Badge Rendering Fixes**:
    - Upgraded hero banners and shields to absolute URLs compatible with PyPI Camo proxy, ensuring high-res visuals on PyPI without alt-text fallback.
-4. **PyPI Navigation Metadata (`[project.urls]`)**:
+5. **PyPI Navigation Metadata (`[project.urls]`)**:
    - Injected official metadata for Homepage, Documentation, Repository, Issues, and Releases into PyPI distribution packages.
-5. **Universal Multi-Agent Ecosystem Expansion**:
+6. **Universal Multi-Agent Ecosystem Expansion**:
    - Explicit first-class support and documentation for Antigravity (Google AGY), Qoder, Claude, Cursor, Windsurf, Codex, Devin, Copilot Workspace, Aider, Cline, and any CLI/IDE subshell agent.
-6. **Top-Level `git_oops` Module Namespace & `python -m git_oops` Support**:
+7. **Top-Level `git_oops` Module Namespace & `python -m git_oops` Support**:
    - Packaged with official top-level `git_oops` distribution namespace, preventing collision with generic `src/` modules.
    - Universal execution via `python -m git_oops` and `py -m git_oops`, making Windows usage 100% immune to Windows Smart App Control (SAC) or WDAC unsigned `.exe` launcher warnings.
-7. **Streamlined Zero-Fork Windows Git Hooks**:
+8. **Streamlined Zero-Fork Windows Git Hooks**:
    - Upgraded global pre-commit and pre-push hook shims to use Windows-native process substitution, eliminating MSYS2 fork contention on developer workstations.
 
 ---
 
-### 🏛️ The 10 Legendary Pillars of v1.0.1
+### 🏛️ The 10 Legendary Pillars of v1.0.3
 
 1. **Universal Zero-Step Global Git Interception (`core.hooksPath`)**:
    - `pip install git-oops` immediately shields every repository on your workstation.
@@ -71,4 +74,4 @@ pip install git-oops
 
 *(Universal protection is active immediately across all local repositories on your computer.)*
 
-**Full Changelog**: https://github.com/Hao610/git-oops/commits/v1.0.1.post2
+**Full Changelog**: https://github.com/Hao610/git-oops/commits/v1.0.3

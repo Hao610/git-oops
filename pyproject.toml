@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "git-oops"
-version = "1.0.1.post2"
+version = "1.0.3"
 description = "The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness (The Final Legend Edition)."
 readme = "README.md"
 authors = [{ name = "Hao" }]

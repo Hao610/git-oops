@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ git-oops v1.0.1 (The Final Legend Edition)
+# ⚡ git-oops v1.0.3 (The Final Legend Edition)
 
 ### *The Zero-Step Autonomous AI Agent Safety Harness & Terminal Crash Interceptor.*
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
@@ -8,7 +8,8 @@
 ![git-oops Hero Banner](https://raw.githubusercontent.com/Hao610/git-oops/main/assets/readme-hero.jpg)
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/Release-v1.0.1.post2%20Legend-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Version](https://img.shields.io/badge/Release-v1.0.3%20Legend-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Auto-Updater](https://img.shields.io/badge/Auto--Updater-Autonomous%20Zero--Touch-blue)](https://github.com/Hao610/git-oops)
 [![PyPI](https://img.shields.io/pypi/v/git-oops.svg?color=blue)](https://pypi.org/project/git-oops/)
 [![Provenance](https://img.shields.io/badge/SLSA-Verified%20Provenance-brightgreen)](https://pypi.org/project/git-oops/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Hao610/git-oops/blob/main/LICENSE)
