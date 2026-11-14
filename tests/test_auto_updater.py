@@ -45,3 +45,10 @@ def test_background_self_upgrade_non_blocking():
     trigger_background_self_upgrade()
     # Verify process is still alive and responsive
     assert True
+
+
+def test_cli_version_flag():
+    import subprocess
+    out = subprocess.check_output([sys.executable, "-m", "git_oops", "--version"], text=True)
+    assert "git-oops v1.0.3" in out
+
