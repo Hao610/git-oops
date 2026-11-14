@@ -32,7 +32,7 @@ def get_current_version() -> str:
             from src import __version__
             return __version__
         except Exception:
-            return "1.0.5"
+            return "1.0.5.1"
 
 
 def _parse_version(v_str: str) -> Tuple[int, ...]:

@@ -1,9 +1,9 @@
 """
 git-oops: The Autonomous Terminal Crash Fixer & AI Agent Safety Harness.
-Version 1.0.5 (Enterprise Edition)
+Version 1.0.5.1 (Enterprise Edition)
 """
 
-__version__ = "1.0.5"
+__version__ = "1.0.5.1"
 
 from git_oops.hooks import ensure_auto_hooks
 from git_oops.rules import trigger_ota_update_background
