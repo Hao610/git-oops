@@ -68,7 +68,7 @@ def main():
         prog="git-oops",
         description="Brutally honest terminal crash fixer with daily spend-protection circuit breaker."
     )
-    parser.add_argument("-v", "--version", action="version", version="git-oops v1.0.3.post1 (The Final Legend Edition)")
+    parser.add_argument("-v", "--version", action="version", version="git-oops v1.0.5 (The Final Legend Edition)")
     parser.add_argument("-f", "--file", help="Path to the file that crashed", default=None)
     parser.add_argument("-e", "--error", help="Error message or traceback string", default=None)
     parser.add_argument("-b", "--budget", help="Daily API spend ceiling in USD (default: $1.00)", type=float, default=saved_cfg.get("daily_budget", 1.0))

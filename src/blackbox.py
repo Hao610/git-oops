@@ -12,15 +12,27 @@ import shutil
 import hashlib
 from typing import Dict, Any, List, Optional
 
-DB_DIR = os.path.expanduser("~/.git_oops/memory")
-FLIGHT_RECORDER_FILE = os.path.join(DB_DIR, "flight_recorder.jsonl")
-ANTIBODIES_FILE = os.path.join(DB_DIR, "antibodies.json")
-SNAPSHOTS_DIR = os.path.join(DB_DIR, "snapshots")
+
+def get_memory_dir() -> str:
+    """Returns directory for blackbox memory, supporting isolated test sandboxes."""
+    return os.environ.get("GIT_OOPS_MEMORY_DIR", os.path.expanduser("~/.git_oops/memory"))
+
+
+def get_flight_recorder_file() -> str:
+    return os.path.join(get_memory_dir(), "flight_recorder.jsonl")
+
+
+def get_antibodies_file() -> str:
+    return os.path.join(get_memory_dir(), "antibodies.json")
+
+
+def get_snapshots_dir() -> str:
+    return os.path.join(get_memory_dir(), "snapshots")
 
 
 def _ensure_dirs():
-    os.makedirs(DB_DIR, exist_ok=True)
-    os.makedirs(SNAPSHOTS_DIR, exist_ok=True)
+    os.makedirs(get_memory_dir(), exist_ok=True)
+    os.makedirs(get_snapshots_dir(), exist_ok=True)
 
 
 def record_step(agent_id: str, action: str, target_file: str, motivation: str, diff: str) -> int:
@@ -29,21 +41,30 @@ def record_step(agent_id: str, action: str, target_file: str, motivation: str, d
     step_id = int(time.time() * 1000)
     
     # Snapshot file
-    if os.path.exists(target_file):
-        snap_path = os.path.join(SNAPSHOTS_DIR, f"{step_id}_{os.path.basename(target_file)}")
-        shutil.copy2(target_file, snap_path)
+    if target_file and os.path.exists(target_file):
+        snap_path = os.path.join(get_snapshots_dir(), f"{step_id}_{os.path.basename(target_file)}")
+        try:
+            shutil.copy2(target_file, snap_path)
+        except Exception:
+            pass
+
+    # Enterprise sanitation
+    clean_agent = (agent_id or "autonomous-agent").strip()
+    if clean_agent.lower() in ("undefined", "none", ""):
+        clean_agent = "autonomous-agent"
 
     event = {
         "step_id": step_id,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "agent_id": agent_id,
+        "agent_id": clean_agent,
+        "actor": clean_agent,
         "action": action,
         "target_file": target_file,
         "motivation": motivation,
-        "diff_snippet": diff[:300]
+        "diff_snippet": diff[:300] if diff else ""
     }
 
-    with open(FLIGHT_RECORDER_FILE, "a", encoding="utf-8") as f:
+    with open(get_flight_recorder_file(), "a", encoding="utf-8") as f:
         f.write(json.dumps(event) + "\n")
     return step_id
 
@@ -51,10 +72,11 @@ def record_step(agent_id: str, action: str, target_file: str, motivation: str, d
 def list_flight_events(limit: int = 10) -> List[Dict[str, Any]]:
     """Retrieves recent flight recorder events."""
     _ensure_dirs()
-    if not os.path.exists(FLIGHT_RECORDER_FILE):
+    flight_file = get_flight_recorder_file()
+    if not os.path.exists(flight_file):
         return []
     events = []
-    with open(FLIGHT_RECORDER_FILE, "r", encoding="utf-8") as f:
+    with open(flight_file, "r", encoding="utf-8") as f:
         for line in f:
             if line.strip():
                 try:
@@ -62,6 +84,20 @@ def list_flight_events(limit: int = 10) -> List[Dict[str, Any]]:
                 except Exception:
                     pass
     return events[-limit:]
+
+
+def clear_flight_events() -> bool:
+    """Clears all recorded flight events and snapshots."""
+    _ensure_dirs()
+    flight_file = get_flight_recorder_file()
+    if os.path.exists(flight_file):
+        try:
+            with open(flight_file, "w", encoding="utf-8") as f:
+                pass
+            return True
+        except Exception:
+            return False
+    return True
 
 
 def rewind_step(step_id: int) -> bool:
@@ -73,7 +109,7 @@ def rewind_step(step_id: int) -> bool:
         return False
 
     orig_file = target_event["target_file"]
-    snap_path = os.path.join(SNAPSHOTS_DIR, f"{step_id}_{os.path.basename(orig_file)}")
+    snap_path = os.path.join(get_snapshots_dir(), f"{step_id}_{os.path.basename(orig_file)}")
     if os.path.exists(snap_path):
         shutil.copy2(snap_path, orig_file)
         return True
@@ -83,10 +119,11 @@ def rewind_step(step_id: int) -> bool:
 def register_antibody(error_pattern: str, verified_solution: str, explanation: str):
     """Stores permanent cross-session immunization pattern."""
     _ensure_dirs()
+    antibodies_file = get_antibodies_file()
     antibodies = {}
-    if os.path.exists(ANTIBODIES_FILE):
+    if os.path.exists(antibodies_file):
         try:
-            with open(ANTIBODIES_FILE, "r", encoding="utf-8") as f:
+            with open(antibodies_file, "r", encoding="utf-8") as f:
                 antibodies = json.load(f)
         except Exception:
             antibodies = {}
@@ -99,21 +136,23 @@ def register_antibody(error_pattern: str, verified_solution: str, explanation: s
         "learned_at": time.strftime("%Y-%m-%d")
     }
 
-    with open(ANTIBODIES_FILE, "w", encoding="utf-8") as f:
+    with open(antibodies_file, "w", encoding="utf-8") as f:
         json.dump(antibodies, f, indent=2)
 
 
-def match_antibody(error_log: str) -> Optional[Dict[str, Any]]:
-    """Returns verified architecture pattern if previously solved in past sessions."""
-    _ensure_dirs()
-    if not os.path.exists(ANTIBODIES_FILE):
+def match_antibody(error_trace: str) -> Optional[Dict[str, str]]:
+    """Checks if an error matches any known pre-immunized antibody."""
+    antibodies_file = get_antibodies_file()
+    if not os.path.exists(antibodies_file):
         return None
     try:
-        with open(ANTIBODIES_FILE, "r", encoding="utf-8") as f:
+        with open(antibodies_file, "r", encoding="utf-8") as f:
             antibodies = json.load(f)
-        for _, ab in antibodies.items():
-            if ab["pattern"].lower() in error_log.lower():
-                return ab
     except Exception:
-        pass
+        return None
+
+    norm_trace = error_trace.strip().lower()
+    for _, anti in antibodies.items():
+        if anti["pattern"].lower() in norm_trace:
+            return anti
     return None

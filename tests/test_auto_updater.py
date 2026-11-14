@@ -50,7 +50,7 @@ def test_background_self_upgrade_non_blocking():
 def test_cli_version_flag():
     import subprocess
     out = subprocess.check_output([sys.executable, "-m", "git_oops", "--version"], text=True)
-    assert "git-oops v1.0.3.post1" in out
+    assert "git-oops v1.0.5" in out
 
 
 def test_cli_status_short_flag():
