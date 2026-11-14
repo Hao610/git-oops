@@ -1,5 +1,5 @@
 """
-Unit test suite for Git-Oops Autonomous Auto-Updater (v1.0.3)
+Unit test suite for Git-Oops Autonomous Auto-Updater (v1.0.5)
 """
 
 import sys
@@ -17,9 +17,9 @@ from git_oops.updater import (
 def test_version_parsing_and_comparison():
     v1 = _parse_version("1.0.0")
     v2 = _parse_version("1.0.1")
-    v3 = _parse_version("1.0.1.post1")
-    v4 = _parse_version("1.0.1.post2")
-    v5 = _parse_version("1.0.3")
+    v3 = _parse_version("1.0.2")
+    v4 = _parse_version("1.0.4")
+    v5 = _parse_version("1.0.5")
 
     assert v2 > v1
     assert v3 > v2

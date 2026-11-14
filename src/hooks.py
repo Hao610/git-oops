@@ -99,7 +99,7 @@ def setup_global_hooks(force: bool = False) -> Tuple[bool, str]:
                 ["git", "config", "--global", "core.hooksPath", hooks_dir_str],
                 check=True, capture_output=True
             )
-            MARKER_FILE.write_text("v1.0.0", encoding="utf-8")
+            MARKER_FILE.write_text("v1.0.5", encoding="utf-8")
             return True, f"Global git hooks installed cleanly at {hooks_dir_str}"
         else:
             return False, f"Existing custom core.hooksPath detected: '{existing_path}'. Not overwriting without --force."

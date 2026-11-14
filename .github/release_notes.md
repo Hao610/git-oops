@@ -1,10 +1,10 @@
-# ⚡ git-oops v1.0.3.post1: The Final Legend Edition
+# ⚡ git-oops v1.0.5: Enterprise Edition
 
-Welcome to **git-oops v1.0.3.post1 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
+Welcome to **git-oops v1.0.5 (Enterprise Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
 
 ---
 
-### 🌟 What's New in v1.0.3.post1:
+### 🌟 What's New in v1.0.5:
 1. **Single-Letter Minimalist CLI Flags**:
    - Upgraded all common workflows with lightning-fast 1-letter shortcuts:
      - `-s` / `--status`: Check accumulated API spend & circuit breaker ceiling.
@@ -34,7 +34,7 @@ Welcome to **git-oops v1.0.3.post1 (The Final Legend Edition)** — the permanen
 
 ---
 
-### 🏛️ The 10 Legendary Pillars of v1.0.3.post1
+### 🏛️ The 10 Legendary Pillars of v1.0.5
 
 1. **Universal Zero-Step Global Git Interception (`core.hooksPath`)**:
    - `pip install git-oops` immediately shields every repository on your workstation.
@@ -82,4 +82,4 @@ pip install git-oops
 
 *(Universal protection is active immediately across all local repositories on your computer.)*
 
-**Full Changelog**: https://github.com/Hao610/git-oops/commits/v1.0.3.post1
+**Full Changelog**: https://github.com/Hao610/git-oops/commits/v1.0.5

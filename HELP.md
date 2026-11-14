@@ -222,8 +222,8 @@ Standard linters check formatting and known syntax errors on static code, but th
 4. Don't provide an isolated shadow workspace or multi-agent concurrency mutex locks.
 `git-oops` is an active **runtime safety harness and autonomous supervisor** specifically built for the era of AI coding agents.
 
-### Q13: What new features and flags are available in v1.0.3 (The Final Legend Edition)?
-v1.0.3 introduces autonomous zero-touch auto-updating upon computer boot, background silent self-upgrading, zero-configuration global protection, top-level `git_oops` namespace, and powerful new commands:
+### Q13: What new features and flags are available in v1.0.5 (Enterprise Edition)?
+v1.0.5 introduces autonomous zero-touch auto-updating upon computer boot, background silent self-upgrading, zero-configuration global protection, top-level `git_oops` namespace, and powerful new commands:
 - **`python -m git_oops`** or **`git-oops`**: Runs anywhere with zero Windows Smart App Control unsigned binary warnings.
 - **`git-oops --hud`**: Launches the Obsidian Glassmorphism Web HUD (`http://localhost:8443`) for real-time telemetry.
 - **`git-oops --pre-commit`**: Manually executes the sub-second (<0.1s) L3 local CI/CD security pre-flight check.

@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ git-oops v1.0.3.post1 (The Final Legend Edition)
+# ⚡ git-oops v1.0.5 (Enterprise Edition)
 
 ### *The Zero-Step Autonomous AI Agent Safety Harness & Terminal Crash Interceptor.*
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
@@ -8,7 +8,7 @@
 ![git-oops Hero Banner](https://raw.githubusercontent.com/Hao610/git-oops/main/assets/readme-hero.jpg)
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/Release-v1.0.3.post1%20Legend-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Version](https://img.shields.io/badge/Release-v1.0.5%20Enterprise-blue.svg)](https://github.com/Hao610/git-oops/releases)
 [![Auto-Updater](https://img.shields.io/badge/Auto--Updater-Autonomous%20Zero--Touch-blue)](https://github.com/Hao610/git-oops)
 [![PyPI](https://img.shields.io/pypi/v/git-oops.svg?color=blue)](https://pypi.org/project/git-oops/)
 [![Provenance](https://img.shields.io/badge/SLSA-Verified%20Provenance-brightgreen)](https://pypi.org/project/git-oops/)
@@ -154,14 +154,14 @@ git-oops --salvage
 
 ## 🧪 Comprehensive Test Suite
 
-All 34 test suites run in under 4.0 seconds with 100% pass rate:
+All 41 test suites run in under 4.2 seconds with 100% pass rate:
 
 ```bash
 pytest tests -v
 ```
 
 ```text
-============================= 34 passed in 3.97s ==============================
+============================= 41 passed in 4.20s ==============================
 ```
 
 ---

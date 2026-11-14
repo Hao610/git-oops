@@ -1,6 +1,6 @@
 """
 git-oops: The Autonomous Terminal Crash Fixer & AI Agent Safety Harness.
-Version 1.0.5 (The Final Legend Edition)
+Version 1.0.5 (Enterprise Edition)
 """
 
 __version__ = "1.0.5"

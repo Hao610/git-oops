@@ -32,7 +32,7 @@ jobs:
             TARGET_TAG=$(git tag -l "v*" | sort -V | tail -n 1)
           fi
           if [ -z "$TARGET_TAG" ]; then
-            TARGET_TAG="v1.0.3.post1"
+            TARGET_TAG="v1.0.5"
           fi
           
           echo "Target Release Tag determined dynamically: $TARGET_TAG"
@@ -47,7 +47,7 @@ jobs:
             gh release edit "$TARGET_TAG" --target "$GITHUB_SHA" --notes-file .github/release_notes.md --draft=false
           else
             echo "Release $TARGET_TAG does not exist, creating dynamically..."
-            gh release create "$TARGET_TAG" --title "⚡ git-oops $TARGET_TAG: The Final Legend Edition" --notes-file .github/release_notes.md --target "$GITHUB_SHA" --draft=false
+            gh release create "$TARGET_TAG" --title "⚡ git-oops $TARGET_TAG: Enterprise Edition" --notes-file .github/release_notes.md --target "$GITHUB_SHA" --draft=false
           fi
 
       - name: Set up Python for PyPI Packaging

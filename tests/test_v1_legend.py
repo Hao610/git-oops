@@ -1,5 +1,5 @@
 """
-Test suite for Git-Oops v1.0.0 (The Final Legend Edition)
+Test suite for Git-Oops v1.0.5 (Enterprise Edition)
 Covers all new core pillars: Zero-step Hooks, L3 Pre-Flight, OTA Rules,
 Hardware Throttling, AST Symbolic Solver, Typosquatting Interceptor,
 Crash Replay, Reflog Salvage, Pre-PR Gatekeeper, and Local LLM Adapter.

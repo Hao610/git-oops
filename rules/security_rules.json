@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-ota",
+  "version": "1.0.5-ota",
   "description": "Dynamic Git-Oops L3 Security Signatures and Rule Definitions",
   "last_updated": 1731550000,
   "secret_patterns": [
