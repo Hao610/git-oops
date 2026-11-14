@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ git-oops v1.0.0 (The Final Legend Edition)
+# ⚡ git-oops v1.0.1 (The Final Legend Edition)
 
 ### *The Zero-Step Autonomous AI Agent Safety Harness & Terminal Crash Interceptor.*
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
@@ -10,7 +10,9 @@
 </p>
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/Release-v1.0.0%20Legend-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Version](https://img.shields.io/badge/Release-v1.0.1%20Legend-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![PyPI](https://img.shields.io/pypi/v/git-oops.svg?color=blue)](https://pypi.org/project/git-oops/)
+[![Provenance](https://img.shields.io/badge/SLSA-Verified%20Provenance-brightgreen)](https://pypi.org/project/git-oops/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python)](https://www.python.org/)
 [![Zero-Step-Hooks](https://img.shields.io/badge/Git%20Hooks-Zero--Step%20Global-success)]()

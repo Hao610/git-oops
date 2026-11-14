@@ -221,10 +221,11 @@ Standard linters check formatting and known syntax errors on static code, but th
 4. Don't provide an isolated shadow workspace or multi-agent concurrency mutex locks.
 `git-oops` is an active **runtime safety harness and autonomous supervisor** specifically built for the era of AI coding agents.
 
-### Q13: What new features and flags are available in v1.0.0 (The Final Legend Edition)?
-v1.0.0 introduces zero-configuration global protection and powerful new commands:
+### Q13: What new features and flags are available in v1.0.1 (The Final Legend Edition)?
+v1.0.1 introduces zero-configuration global protection, top-level `git_oops` namespace, and powerful new commands:
+- **`python -m git_oops`** or **`git-oops`**: Runs anywhere with zero Windows Smart App Control unsigned binary warnings.
 - **`git-oops --hud`**: Launches the Obsidian Glassmorphism Web HUD (`http://localhost:8443`) for real-time telemetry.
-- **`git-oops --pre-commit`**: Manually executes the sub-second (<0.3s) L3 local CI/CD security pre-flight check.
+- **`git-oops --pre-commit`**: Manually executes the sub-second (<0.1s) L3 local CI/CD security pre-flight check.
 - **`git-oops --pre-push`**: Verifies branch protection and checks outgoing commits before pushing.
 - **`git-oops --solver`**: 1ms zero-AI symbolic deterministic crash solver ($0.00 cost, 0 tokens).
 - **`git-oops --salvage`**: Git reflog autopsy to resurrect lost commits after an agent disaster.

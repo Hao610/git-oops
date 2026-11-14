@@ -39,24 +39,16 @@ exec python -m src.cli --pre-push
 """
 
 PRE_COMMIT_SCRIPT_BAT = """@echo off
-REM git-oops zero-step L3 pre-commit hook (Windows CMD)
-where git-oops >nul 2>nul
-if %ERRORLEVEL% equ 0 (
-    git-oops --pre-commit
-    exit /b %ERRORLEVEL%
-)
-python -m src.cli --pre-commit
+python -m git_oops --pre-commit
+if %ERRORLEVEL% equ 0 exit /b 0
+py -m git_oops --pre-commit
 exit /b %ERRORLEVEL%
 """
 
 PRE_PUSH_SCRIPT_BAT = """@echo off
-REM git-oops zero-step L3 pre-push hook (Windows CMD)
-where git-oops >nul 2>nul
-if %ERRORLEVEL% equ 0 (
-    git-oops --pre-push
-    exit /b %ERRORLEVEL%
-)
-python -m src.cli --pre-push
+python -m git_oops --pre-push
+if %ERRORLEVEL% equ 0 exit /b 0
+py -m git_oops --pre-push
 exit /b %ERRORLEVEL%
 """
 

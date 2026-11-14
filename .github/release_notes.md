@@ -1,16 +1,27 @@
-# ⚡ git-oops v1.0.0: The Final Legend Edition
+# ⚡ git-oops v1.0.1: The Final Legend Edition
 
-Welcome to **git-oops v1.0.0 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
+Welcome to **git-oops v1.0.1 (The Final Legend Edition)** — the permanent, zero-maintenance, complete release of the Autonomous AI Agent Safety Harness and Terminal Crash Interceptor.
 
 ---
 
-### 🏛️ The 10 Legendary Pillars of v1.0.0
+### 🌟 What's New in v1.0.1:
+1. **Top-Level `git_oops` Module Namespace & `python -m git_oops` Support**:
+   - Packaged with official top-level `git_oops` distribution namespace, preventing collision with generic `src/` modules.
+   - Adds universal support for running via `python -m git_oops` and `py -m git_oops`, making Windows usage 100% immune to Windows Smart App Control (SAC) or WDAC unsigned `.exe` launcher false positives.
+2. **PyPI Cryptographic Provenance & SLSA Attestations**:
+   - Official PyPA OIDC Sigstore build attestations guaranteeing cryptographic supply-chain verification on PyPI.
+3. **Streamlined Zero-Fork Windows Git Hooks**:
+   - Upgraded global pre-commit and pre-push hook shims to use Windows-native process substitution, eliminating MSYS2 fork contention on developer workstations.
+
+---
+
+### 🏛️ The 10 Legendary Pillars of v1.0.1
 
 1. **Universal Zero-Step Global Git Interception (`core.hooksPath`)**:
-   - `pip install git-oops` immediately shields every repository on your entire workstation.
+   - `pip install git-oops` immediately shields every repository on your workstation.
    - Zero manual hook setup. Automatically protects human developers and autonomous coding agents (Claude, Cursor, Devin) on every `git commit` and `git push`.
 
-2. **Sub-Second (<0.3s) L3 Local CI/CD Pre-Flight Engine**:
+2. **Sub-Second (<0.1s) L3 Local CI/CD Pre-Flight Engine**:
    - Replicates 100% of GitHub Cloud CI/CD security audits locally in milliseconds before commits touch the wire.
    - Shannon Entropy & Token Leak Scanning (OpenAI, AWS, GitHub, Slack, Private Keys).
    - Native AST CodeQL CWE Mirror (SQL Injection, Command Injection, Dangerous Eval, Cleartext Logging).
@@ -19,7 +30,7 @@ Welcome to **git-oops v1.0.0 (The Final Legend Edition)** — the permanent, zer
    - Security signatures, CVE definitions, and malicious package lists are completely decoupled from Python code.
    - Silently auto-updates rules in the background whenever an internet connection is present, with hardened offline baseline fallback.
 
-4. **Obsidian Glassmorphism Web HUD (`git-oops --hud`)**:
+4. **Obsidian Glassmorphism Web HUD (`git-oops --hud` or `python -m git_oops --hud`)**:
    - Zero-dependency built-in dashboard featuring Obsidian Void `#050507` styling, frosted glass cards, and neon telemetry.
    - Real-time spend dial, agent lock monitors, hardware thermal telemetry, crash timelines, and one-click panic salvage.
 
@@ -45,15 +56,11 @@ Welcome to **git-oops v1.0.0 (The Final Legend Edition)** — the permanent, zer
 
 ---
 
-### 🧪 Quality Assurance & Test Verification
-- Matrix test suite verified across Python 3.10, 3.11, 3.12, 3.13.
-- 31 test suites passing 100% in under 3.9 seconds.
-- Zero heavy C-extensions or external platform dependencies.
-
----
-
 ### 🚀 Instant Installation
 ```bash
 pip install git-oops
 ```
-*(Hooks and safety harnesses activate immediately and universally across your machine.)*
+
+*(Universal protection is active immediately across all local repositories on your computer.)*
+
+**Full Changelog**: https://github.com/Hao610/git-oops/commits/v1.0.1

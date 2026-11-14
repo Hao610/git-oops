@@ -2,11 +2,11 @@ try:
     from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
-    find_packages = lambda: ["src"]
+    find_packages = lambda: ["git_oops", "src"]
 
 setup(
     name="git-oops",
-    version="1.0.0",
+    version="1.0.1",
     description="The Dual-Mode Terminal Crash Fixer & Autonomous AI Agent Safety Harness (The Final Legend Edition).",
     author="Hao",
     packages=find_packages(),
@@ -16,7 +16,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "git-oops = src.cli:main",
+            "git-oops = git_oops.cli:main",
         ],
     },
     python_requires=">=3.9",
