@@ -1,5 +1,5 @@
 """
-Test suite for Git-Oops v1.1.0 (The Eight Pillars Edition)
+Test suite for Git-Oops v1.1.1 (The Eight Pillars Edition)
 Covers all core pillars: Zero-step Hooks, L1-L8 Pre-Flight, OTA Rules,
 Hardware Throttling, AST Symbolic Solver, Typosquatting Interceptor,
 Crash Replay, Reflog Salvage, Pre-PR Gatekeeper, and Local LLM Adapter.

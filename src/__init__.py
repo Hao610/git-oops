@@ -1,9 +1,9 @@
 """
 git-oops: The Autonomous Terminal Crash Fixer & AI Agent Safety Harness.
-Version 1.1.0 (The Eight Pillars Edition)
+Version 1.1.1 (The Eight Pillars Edition)
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 from src.hooks import ensure_auto_hooks
 from src.rules import trigger_ota_update_background
