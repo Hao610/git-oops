@@ -1,5 +1,5 @@
 """
-Git-Oops Self-Evolution & Autonomous Auto-Upgrade Engine (v1.1.1)
+Git-Oops Self-Evolution & Autonomous Auto-Upgrade Engine (v1.1.2)
 1. Automatic Windows/POSIX Startup Silent Auto-Updater (Runs quietly on computer boot when network connects).
 2. Zero-Latency Background Daemon Auto-Upgrade (Checks PyPI in background thread on routine git commands).
 3. Runtime health evaluation & auto-migration against bit-rot.
@@ -32,7 +32,7 @@ def get_current_version() -> str:
             from src import __version__
             return __version__
         except Exception:
-            return "1.1.1"
+            return "1.1.2"
 
 
 def _parse_version(v_str: str) -> Tuple[int, ...]:

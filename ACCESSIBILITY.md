@@ -1,4 +1,4 @@
-# Accessibility Statement (A11y) — git-oops v1.1.1
+# Accessibility Statement (A11y) — git-oops v1.1.2
 
 The `git-oops` project is dedicated to ensuring that both our terminal CLI and our real-time Obsidian Glassmorphism Web HUD (`http://localhost:8443`) are fully accessible, inclusive, and ergonomic for all developers, operators, and neurodivergent engineers.
 

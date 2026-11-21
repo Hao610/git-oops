@@ -652,7 +652,7 @@ class OopsHUDHandler(BaseHTTPRequestHandler):
                 try:
                     from src import __version__
                 except Exception:
-                    __version__ = "1.1.1"
+                    __version__ = "1.1.2"
 
             rendered = ENTERPRISE_HTML_TEMPLATE.replace("{{VERSION}}", __version__)
             self.wfile.write(rendered.encode("utf-8"))

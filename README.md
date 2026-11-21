@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ git-oops v1.1.1 (The Eight Pillars Edition)
+# ⚡ git-oops v1.1.2 (The Eight Pillars Edition)
 
 ### *The Zero-Step Autonomous AI Agent Safety Harness & Terminal Crash Interceptor.*
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
@@ -8,9 +8,9 @@
 ![git-oops Hero Banner](https://raw.githubusercontent.com/Hao610/git-oops/main/assets/readme-hero.jpg)
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/Release-v1.1.1%20The%20Eight%20Pillars-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Version](https://img.shields.io/badge/Release-v1.1.2%20The%20Eight%20Pillars-blue.svg)](https://github.com/Hao610/git-oops/releases)
 [![Auto-Updater](https://img.shields.io/badge/Auto--Updater-Autonomous%20Zero--Touch-blue)](https://github.com/Hao610/git-oops)
-[![PyPI](https://img.shields.io/badge/pypi-v1.1.1-blue.svg)](https://pypi.org/project/git-oops/)
+[![PyPI](https://img.shields.io/badge/pypi-v1.1.2-blue.svg)](https://pypi.org/project/git-oops/)
 [![Provenance](https://img.shields.io/badge/SLSA-Verified%20Provenance-brightgreen)](https://pypi.org/project/git-oops/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Hao610/git-oops/blob/main/LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python)](https://www.python.org/)
@@ -23,39 +23,13 @@
 
 ---
 
-## 🏛️ The Eight Pillars of AI Agent Defense (L1 - L8 Architecture)
-
-`git-oops` implements the world's first unified, air-gapped 8-layer defense continuum designed to prevent autonomous coding agents from destroying, degrading, or corrupting software repositories:
-
-```text
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│ L8: The Human Operator Guard │ Panic Protection, Anti-Gaslighting & Sanity Confirmation │
-├──────────────────────────────┼─────────────────────────────────────────────────────────┤
-│ L7: Sovereignty & Air-Gap    │ Network Isolation, OOB Gating & Hardware Kill Switch     │
-├──────────────────────────────┼─────────────────────────────────────────────────────────┤
-│ L6: Cognitive Alignment      │ Semantic Intent-Diff Invariants & Anti-Collusion Gating │
-├──────────────────────────────┼─────────────────────────────────────────────────────────┤
-│ L5: Supply Chain Armor       │ Phantom Dependency Interception & Secret Masking       │
-├──────────────────────────────┼─────────────────────────────────────────────────────────┤
-│ L4: Anti-Slop Engine         │ AST Cyclomatic Complexity & Test-Deletion Cheat Breaker │
-├──────────────────────────────┼─────────────────────────────────────────────────────────┤
-│ L3: Audit & Pre-Flight       │ Zero-Telemetry Blackbox, Reflog Autopsy & Obsidian HUD  │
-├──────────────────────────────┼─────────────────────────────────────────────────────────┤
-│ L2: Execution Firewall       │ Shlex AST Syntax Decomposition against Shell Hijacking   │
-├──────────────────────────────┼─────────────────────────────────────────────────────────┤
-│ L1: Safety Guard             │ Destructive Command Prevention (git reset --hard, etc.) │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
 ## 😤 Why git-oops?
 
 ### For Humans:
 Your script crashes with a 50-line traceback. You're exhausted, and ChatGPT gives you a polite 6-paragraph email instead of a 2-line fix.
 `git-oops` roasts your sloppy code with razor-sharp wit and applies a surgical 1-click git patch directly in your terminal.
 
-### For All Autonomous AI Coding Agents (Antigravity, Claude, Cursor, Windsurf, Qoder, Codex, Devin, and any Agent):
+### For Autonomous AI Coding Agents (Antigravity, Claude, Cursor, Windsurf, Qoder, Codex, Devin):
 Modern autonomous coding agents face catastrophic failure modes:
 1. **Context Bloat**: Multi-thousand line terminal dumps overflow agent context windows.
 2. **Infinite Thrashing**: Agents get trapped in loops editing and reverting the same code.
@@ -67,6 +41,60 @@ Modern autonomous coding agents face catastrophic failure modes:
 
 ---
 
+## 🏛️ The Eight Pillars of AI Agent Defense (L1 - L8 Architecture)
+
+`git-oops` implements the world's first unified, air-gapped 8-layer defense continuum designed to prevent autonomous coding agents from destroying, degrading, or corrupting software repositories:
+
+| Layer | Defense Pillar | Core Engine | Scope & Safeguard |
+| :---: | :--- | :--- | :--- |
+| **L8** | **The Human Operator** | `src/cli.py` | Anti-gaslighting alerts, 1ms deterministic solver, and sanity confirmation. |
+| **L7** | **Sovereignty & Air-Gap** | `src/hardware.py` | 100% offline LLM routing, OOB containment, and hardware kill switches. |
+| **L6** | **Cognitive Alignment** | `src/consensus.py` | Semantic intent-diff invariant gating and multi-agent anti-collusion mutex. |
+| **L5** | **Supply Chain Armor** | `src/supply_chain.py` | Phantom dependency interception, typosquatting guard, and secret masking. |
+| **L4** | **Anti-Slop Engine** | `src/sentinel.py` | AST cyclomatic complexity limits and test-deletion fraud prevention. |
+| **L3** | **Audit & Pre-Flight** | `src/blackbox.py` | Zero-telemetry blackbox recorder, Obsidian Web HUD, and reflog autopsy. |
+| **L2** | **Execution Firewall** | `src/firewall.py` | `shlex` lexical decomposition against shell hijacking (`curl \| bash`). |
+| **L1** | **Safety Guard** | `src/firewall.py` | Destructive command prevention (`git reset --hard`, destructive aliases). |
+
+---
+
+## 🌟 The 30 Super-Capabilities
+
+| # | Capability | Module | What It Does | Why It Matters |
+| :-: | :--- | :--- | :--- | :--- |
+| **1** | 🧑‍💻 **Dual-Mode Engine** | `src/cli.py` | Human visual mode or `--agent` / `--json` headless mode. | Works equally well for human engineers and autonomous agents. |
+| **2** | 🔌 **Native MCP Server** | `src/mcp_server.py` | Exposes tools over stdio (`git-oops --mcp`). | Attaches to Antigravity, Claude, Cursor, Windsurf, Qoder, and all MCP agents. |
+| **3** | 🛑 **Anti-Thrashing Watchdog** | `src/watchdog.py` | Detects repeated edit-revert oscillations (> 3 times). | Halts runaway agent loops before burning through API credits. |
+| **4** | 🛡️ **Blast-Radius Firewall** | `src/firewall.py` | Intercepts `rm -rf`, `force-push`, and wildcard deletions. | Prevents rogue agents from wiping out the filesystem or git history. |
+| **5** | 🕵️ **Supply-Chain Shield** | `src/firewall.py` | Blocks hallucinated/typosquatted package installs. | Protects against AI package hallucination attacks. |
+| **6** | 🚨 **Egress Sniffer Probe** | `src/sentinel.py` | Scans patches for unauthorized phone-home connections. | Blocks trojans and telemetry data exfiltration in patches. |
+| **7** | 🔒 **Multi-Agent Mutex** | `src/watchdog.py` | Cooperative file lease locks across multiple agent workers. | Stops concurrent agents from overwriting each other's changes. |
+| **8** | 🪞 **Shadow Workspace** | `src/shadow.py` | Dry-runs patches inside an ephemeral clone directory. | Zero-risk experimentation; commits only after full validation. |
+| **9** | 👻 **Polyglot Ghost Linter** | `src/guardian.py` | 0 ms AST import check across 15+ major programming languages. | Blocks patches containing non-existent hallucinated packages. |
+| **10** | 🧪 **Regression Guard** | `src/guardian.py` | Runs project tests in sandbox before modifying files. | Prevents agents from breaking existing verified features. |
+| **11** | ⚖️ **Cross-Model Consensus** | `src/consensus.py` | Requires 2 independent models to agree on root causes. | Eliminates single-model hallucination single-points-of-failure. |
+| **12** | ✂️ **Anti-Bloat Complexity** | `src/sentinel.py` | Monitors cyclomatic complexity to prevent code bloat. | Stops agents from writing unmaintainable 8-layer nested spaghetti code. |
+| **13** | 📜 **License Taint Shield** | `src/sentinel.py` | Blocks patches containing viral GPL/AGPL copy-paste headers. | Protects commercial codebases from open-source license lawsuits. |
+| **14** | 📉 **Context Log Squeezer** | `src/squeezer.py` | Compresses 5,000-line stacks to 20 focused lines. | Saves 90% of token context window costs. |
+| **15** | 🔒 **Secret Redactor** | `src/squeezer.py` | Automatically masks API keys and tokens (`<REDACTED_SECRET>`). | Prevents credential leakage across external LLM boundaries. |
+| **16** | 🧭 **Intent Prefetch Engine** | `src/sentinel.py` | Markov-chain prediction prefetching next-step responses. | Speeds up multi-turn agent tool execution chains to 0 ms. |
+| **17** | ✈️ **Flight Recorder** | `src/blackbox.py` | Logs every action, motivation, and takes file snapshots. | Full auditability of what your autonomous agent did overnight. |
+| **18** | ⏪ **Time-Machine Rewind** | `src/blackbox.py` | `--rewind <step_id>` restores snapshot state. | 1-second recovery if an agent takes a wrong path. |
+| **19** | 🧬 **Antibody Immunity DB** | `src/blackbox.py` | Saves verified solutions to a local pathology ledger. | Next time the same error occurs, resolution is instantaneous. |
+| **20** | 🔄 **Anti-Bit-Rot Evolution** | `src/updater.py` | Auto-detects runtime shifts and model deprecations. | Code never rots or breaks across future Python releases. |
+| **21** | 🪝 **Zero-Step Global Hooks** | `src/hooks.py` | Universal machine-wide git interception via `core.hooksPath`. | Zero manual setup; protects every git repository on the machine. |
+| **22** | ⚡ **Sub-Second Pre-Flight** | `src/hooks.py` | Replicates full CI/CD locally in <0.3s before commit/push. | Blocks secrets, SQLi, command injection, and slop instantly. |
+| **23** | 📡 **Dynamic OTA Security Feed** | `src/rules.py` | Silent background auto-sync of latest CVEs & malicious package rules. | Rules update automatically whenever connected; zero code changes needed. |
+| **24** | 🎛️ **Obsidian Glassmorphism HUD** | `src/hud.py` | Live web dashboard (`git-oops --hud`) with dark frosted glass design. | Real-time monitoring of spend, locks, hardware telemetry, and panic salvage. |
+| **25** | ⚡ **1ms Deterministic AST Solver** | `src/solver.py` | Zero-AI / Zero-LLM symbolic compiler deductions for fatal errors. | Fixes NoneType, KeyError, and ZeroDivision in 1ms with 0 tokens and $0.00 cost. |
+| **26** | 🦙 **Pure-Offline Local LLM** | `src/local_llm.py` | Sub-second native connector for Ollama & vLLM (`--local`). | 100% private and air-gapped bug fixing without internet or cloud APIs. |
+| **27** | 🔍 **Supply-Chain Phishing Guard** | `src/supply_chain.py` | Levenshtein distance check + Google OSV live database audit. | Intercepts typosquatted dependency decoy attacks like `reqeusts` and `colorma`. |
+| **28** | 🌡️ **Hardware Sentinel & Throttling** | `src/hardware.py` | Monitors battery (<15%) and thermal limits; pins agents to E-Cores. | Prevents rogue AI agent loops from frying your laptop or draining battery. |
+| **29** | 🛡️ **Pre-PR Staff Gatekeeper** | `src/reviewer.py` | Pre-flight audit comparing branch changes against main (`--review-pr`). | Instant staff-level review of security, complexity drift, and test parity. |
+| **30** | 🩹 **Reflog Autopsy & Crash Replay** | `src/salvage.py` | Rescues lost commits (`--salvage`) and replays variable snapshots (`--replay`). | 1-click disaster recovery even after destructive `git reset --hard` or fatal crashes. |
+
+---
+
 ## ⚡ The Dual-Mode Architecture
 
 ```text
@@ -75,7 +103,6 @@ Modern autonomous coding agents face catastrophic failure modes:
                    ┌──────────────────────┴──────────────────────┐
                    ▼                                             ▼
         [ 🧑‍💻 HUMAN MODE ]                                [ 🤖 AGENT MODE ]
-```
   • High-Fidelity Rounded Cards                   • Clean Machine-Readable JSON
   • Caustic Critic Roasts (Staff/Chef)            • 90% Context Log Squeezer & Redactor
   • Interactive [y/N] Patch Confirmation          • Blast-Radius Firewall & AST Linter
@@ -86,43 +113,6 @@ Modern autonomous coding agents face catastrophic failure modes:
                          [ 🛡️ SHA-256 Cache & Circuit Breaker ]
                          [ 🔌 Native Model Context Protocol (MCP) ]
 ```
-
----
-
-## 🌟 The 20 Super-Capabilities
-
-| # | Capability | Module | What It Does | Why It Matters |
-| :-: | :--- | :--- | :--- | :--- |
-| **1** | 🧑‍💻 **Dual-Mode Engine** | `src/cli.py` | Human visual mode or `--agent` / `--json` headless mode. | Works equally well for human engineers and autonomous agents. |
-| **2** | 🔌 **Native MCP Server** | `src/mcp_server.py` | Exposes tools over stdio (`git-oops --mcp`). | Instantly attaches to Antigravity, Claude Desktop, Cursor, Windsurf, Qoder, and all MCP-compatible clients. |
-| **3** | 🛑 **Anti-Thrashing Watchdog** | `src/watchdog.py` | Detects repeated edit-revert oscillations (> 3 times). | Halts runaway agent loops before burning through credits. |
-| **4** | 🛡️ **Blast-Radius Firewall** | `src/firewall.py` | Intercepts `rm -rf`, `force-push`, and wildcard deletions. | Prevents rogue agents from wiping out the filesystem. |
-| **5** | 🕵️ **Supply-Chain Shield** | `src/firewall.py` | Blocks hallucinated/typosquatted package installs. | Protects against AI package hallucination attacks. |
-| **6** | 🚨 **Egress Sniffer Probe** | `src/sentinel.py` | Scans patches for unauthorized phone-home connections. | Blocks trojans and telemetry data exfiltration in patches. |
-| **7** | 🔒 **Multi-Agent Mutex** | `src/watchdog.py` | Cooperative file lease locks across multiple agent sub-workers. | Stops concurrent agents from overwriting each other. |
-| **8** | 🪞 **Shadow Workspace** | `src/shadow.py` | Dry-runs patches inside an ephemeral clone directory. | Zero-risk experimentation; commits only after full validation. |
-| **9** | 👻 **Polyglot Ghost Import Linter** | `src/guardian.py` | 0 ms AST/heuristic check across Python, JS/TS, Go, Rust, Java/Kotlin, C/C++, PHP, Ruby, C#, Swift, Dart, Lua, Shell & exotic scripts. | Blocks patches containing non-existent hallucinated packages in any language. |
-| **10**| 🧪 **Regression Guard** | `src/guardian.py` | Runs project tests in sandbox before modifying files. | Prevents agents from breaking existing features. |
-| **11**| ⚖️ **Cross-Model Consensus** | `src/consensus.py` | Requires 2 independent models to agree on the root cause. | Eliminates single-model hallucination single-points-of-failure. |
-| **12**| ✂️ **Anti-Bloat Complexity** | `src/sentinel.py` | Monitors cyclomatic complexity to prevent code bloat. | Stops agents from writing 8-layer nested spaghetti code. |
-| **13**| 📜 **License Taint Shield** | `src/sentinel.py` | Blocks patches containing viral GPL/AGPL copy-paste headers. | Protects commercial projects from open-source license lawsuits. |
-| **14**| 📉 **Context Log Squeezer** | `src/squeezer.py` | Compresses 5,000-line stacks to 20 focused lines. | Saves 90% of token context window costs. |
-| **15**| 🔒 **Secret Redactor** | `src/squeezer.py` | Automatically masks API keys and tokens (`<REDACTED_SECRET>`). | Prevents credential leakage across external LLMs. |
-| **16**| 🧭 **Intent Prefetch Engine** | `src/sentinel.py` | Markov-chain prediction prefetching next-step responses. | Speeds up multi-turn agent tool execution chains to 0 ms. |
-| **17**| ✈️ **Flight Recorder** | `src/blackbox.py` | Logs every action, motivation, and takes file snapshots. | Full auditability of what your agent did overnight. |
-| **18**| ⏪ **Time-Machine Rewind** | `src/blackbox.py` | `--rewind <step_id>` restores snapshot state. | 1-second recovery if an agent takes a wrong path. |
-| **19**| 🧬 **Antibody Immunity DB** | `src/blackbox.py` | Saves verified solutions to a local pathology ledger. | Next time the same error occurs, resolution is instant. |
-| **20**| 🔄 **Anti-Bit-Rot Evolution** | `src/updater.py` | Auto-detects runtime shifts and model deprecations. | Code never rots or breaks across future Python releases. |
-| **21**| 🪝 **Zero-Step Global Hooks** | `src/hooks.py` | Universal machine-wide git interception via `core.hooksPath`. | Zero manual configuration; protects every repository on the machine. |
-| **22**| ⚡ **Sub-Second Pre-Flight** | `src/hooks.py` | Replicates full CI/CD locally in <0.3s before commit/push. | Blocks secrets, SQLi, command injection, and slop instantly. |
-| **23**| 📡 **Dynamic OTA Security Feed**| `src/rules.py` | Silent background auto-sync of latest CVEs & malicious package rules. | Rules update automatically whenever connected; zero code changes needed. |
-| **24**| 🎛️ **Obsidian Glassmorphism HUD**| `src/hud.py` | Live web dashboard (`git-oops --hud`) with dark frosted glass design. | Real-time monitoring of spend, locks, hardware telemetry, and panic salvage. |
-| **25**| ⚡ **1ms Deterministic AST Solver**| `src/solver.py` | Zero-AI / Zero-LLM symbolic compiler deductions for fatal errors. | Fixes NoneType, KeyError, and ZeroDivision in 1ms with 0 tokens and $0.00 cost. |
-| **26**| 🦙 **Pure-Offline Local LLM** | `src/local_llm.py` | Sub-second native connector for Ollama & vLLM (`--local`). | 100% private and air-gapped bug fixing without internet or cloud APIs. |
-| **27**| 🔍 **Supply-Chain Phishing Guard**| `src/supply_chain.py`| Levenshtein distance check + Google OSV live database audit. | Intercepts typosquatted dependency decoy attacks like `reqeusts` and `colorma`. |
-| **28**| 🌡️ **Hardware Sentinel & Throttling**| `src/hardware.py`| Monitors battery (<15%) and thermal limits; pins agents to E-Cores. | Prevents rogue AI agent loops from frying your laptop or draining battery. |
-| **29**| 🛡️ **Pre-PR Staff Gatekeeper** | `src/reviewer.py`| Pre-flight audit comparing branch changes against main (`--review-pr`). | Instant staff-level review of security, complexity drift, and test parity. |
-| **30**| 🩹 **Reflog Autopsy & Crash Replay**| `src/salvage.py`| Rescues lost commits (`--salvage`) and replays variable snapshots (`--replay`).| 1-click disaster recovery even after destructive `git reset --hard` or fatal crashes. |
 
 ---
 
@@ -155,7 +145,7 @@ Add this to your MCP configuration:
 }
 ```
 
-#### Option B: For Any Subshell / CLI AI Agent (Codex, Devin, Copilot, Aider, Roo Code, Cline, etc.):
+#### Option B: For Any Subshell / CLI AI Agent (Codex, Devin, Copilot, Aider, Roo Code, Cline):
 Simply tell your agent in prompt or rule:
 > *"Always diagnose and apply patches safely via: `git-oops --agent --file <file> --error \"<error>\" --yes`"*
 It outputs clean machine-readable JSON without ANSI codes.
@@ -189,7 +179,7 @@ pytest tests -v
 ```
 
 ```text
-============================= 41 passed in 4.20s ==============================
+============================= 41 passed in 3.02s ==============================
 ```
 
 ---
