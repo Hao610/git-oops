@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ git-oops v1.0.5 (Enterprise Edition)
+# ⚡ git-oops v1.1.0 (The Eight Pillars Edition)
 
 ### *The Zero-Step Autonomous AI Agent Safety Harness & Terminal Crash Interceptor.*
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
@@ -8,18 +8,44 @@
 ![git-oops Hero Banner](https://raw.githubusercontent.com/Hao610/git-oops/main/assets/readme-hero.jpg)
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/Release-v1.0.5%20Enterprise-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Version](https://img.shields.io/badge/Release-v1.1.0%20The%20Eight%20Pillars-blue.svg)](https://github.com/Hao610/git-oops/releases)
 [![Auto-Updater](https://img.shields.io/badge/Auto--Updater-Autonomous%20Zero--Touch-blue)](https://github.com/Hao610/git-oops)
 [![PyPI](https://img.shields.io/pypi/v/git-oops.svg?color=blue)](https://pypi.org/project/git-oops/)
 [![Provenance](https://img.shields.io/badge/SLSA-Verified%20Provenance-brightgreen)](https://pypi.org/project/git-oops/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Hao610/git-oops/blob/main/LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python)](https://www.python.org/)
 [![Zero-Step-Hooks](https://img.shields.io/badge/Git%20Hooks-Zero--Step%20Global-success)](https://github.com/Hao610/git-oops)
-[![L3-Preflight](https://img.shields.io/badge/L3%20CI%2FCD-%3C0.3s%20Local%20Pre--Flight-green)](https://github.com/Hao610/git-oops)
+[![L8-Full-Defense](https://img.shields.io/badge/L8%20Defense-Full%20Spectrum%20Armor-green)](https://github.com/Hao610/git-oops)
 [![MCP-Ready](https://img.shields.io/badge/MCP-Native%20Server%20Ready-purple)](https://github.com/Hao610/git-oops)
 [![Spend-Protection](https://img.shields.io/badge/Wallet-Circuit%20Breaker%20Protected-orange)](https://github.com/Hao610/git-oops)
 
 </div>
+
+---
+
+## 🏛️ The Eight Pillars of AI Agent Defense (L1 - L8 Architecture)
+
+`git-oops` implements the world's first unified, air-gapped 8-layer defense continuum designed to prevent autonomous coding agents from destroying, degrading, or corrupting software repositories:
+
+```text
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ L8: The Human Operator Guard │ Panic Protection, Anti-Gaslighting & Sanity Confirmation │
+├──────────────────────────────┼─────────────────────────────────────────────────────────┤
+│ L7: Sovereignty & Air-Gap    │ Network Isolation, OOB Gating & Hardware Kill Switch     │
+├──────────────────────────────┼─────────────────────────────────────────────────────────┤
+│ L6: Cognitive Alignment      │ Semantic Intent-Diff Invariants & Anti-Collusion Gating │
+├──────────────────────────────┼─────────────────────────────────────────────────────────┤
+│ L5: Supply Chain Armor       │ Phantom Dependency Interception & Secret Masking       │
+├──────────────────────────────┼─────────────────────────────────────────────────────────┤
+│ L4: Anti-Slop Engine         │ AST Cyclomatic Complexity & Test-Deletion Cheat Breaker │
+├──────────────────────────────┼─────────────────────────────────────────────────────────┤
+│ L3: Audit & Pre-Flight       │ Zero-Telemetry Blackbox, Reflog Autopsy & Obsidian HUD  │
+├──────────────────────────────┼─────────────────────────────────────────────────────────┤
+│ L2: Execution Firewall       │ Shlex AST Syntax Decomposition against Shell Hijacking   │
+├──────────────────────────────┼─────────────────────────────────────────────────────────┤
+│ L1: Safety Guard             │ Destructive Command Prevention (git reset --hard, etc.) │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -35,6 +61,7 @@ Modern autonomous coding agents face catastrophic failure modes:
 2. **Infinite Thrashing**: Agents get trapped in loops editing and reverting the same code.
 3. **Ghost Hallucinations**: Agents import non-existent libraries or fall into typosquatted package traps.
 4. **Blast-Radius Disasters**: Agents accidentally execute `rm -rf` or destructive force-pushes.
+5. **Code Degradation & Slop**: Agents inflate cyclomatic complexity or cheat failing tests by deleting assertions.
 
 **`git-oops` provides the missing runtime safety harness that shields your repository, your sanity, and your wallet.**
 
@@ -48,6 +75,7 @@ Modern autonomous coding agents face catastrophic failure modes:
                    ┌──────────────────────┴──────────────────────┐
                    ▼                                             ▼
         [ 🧑‍💻 HUMAN MODE ]                                [ 🤖 AGENT MODE ]
+```
   • High-Fidelity Rounded Cards                   • Clean Machine-Readable JSON
   • Caustic Critic Roasts (Staff/Chef)            • 90% Context Log Squeezer & Redactor
   • Interactive [y/N] Patch Confirmation          • Blast-Radius Firewall & AST Linter
@@ -86,7 +114,7 @@ Modern autonomous coding agents face catastrophic failure modes:
 | **19**| 🧬 **Antibody Immunity DB** | `src/blackbox.py` | Saves verified solutions to a local pathology ledger. | Next time the same error occurs, resolution is instant. |
 | **20**| 🔄 **Anti-Bit-Rot Evolution** | `src/updater.py` | Auto-detects runtime shifts and model deprecations. | Code never rots or breaks across future Python releases. |
 | **21**| 🪝 **Zero-Step Global Hooks** | `src/hooks.py` | Universal machine-wide git interception via `core.hooksPath`. | Zero manual configuration; protects every repository on the machine. |
-| **22**| ⚡ **Sub-Second L3 Pre-Flight** | `src/hooks.py` | Replicates full GitHub CI/CD locally in <0.3s before commit/push. | Blocks secrets, SQLi, command injection, and test failures instantly. |
+| **22**| ⚡ **Sub-Second Pre-Flight** | `src/hooks.py` | Replicates full CI/CD locally in <0.3s before commit/push. | Blocks secrets, SQLi, command injection, and slop instantly. |
 | **23**| 📡 **Dynamic OTA Security Feed**| `src/rules.py` | Silent background auto-sync of latest CVEs & malicious package rules. | Rules update automatically whenever connected; zero code changes needed. |
 | **24**| 🎛️ **Obsidian Glassmorphism HUD**| `src/hud.py` | Live web dashboard (`git-oops --hud`) with dark frosted glass design. | Real-time monitoring of spend, locks, hardware telemetry, and panic salvage. |
 | **25**| ⚡ **1ms Deterministic AST Solver**| `src/solver.py` | Zero-AI / Zero-LLM symbolic compiler deductions for fatal errors. | Fixes NoneType, KeyError, and ZeroDivision in 1ms with 0 tokens and $0.00 cost. |
@@ -104,7 +132,7 @@ Modern autonomous coding agents face catastrophic failure modes:
 ```bash
 pip install git-oops
 ```
-> **Zero Configuration Required**: `git-oops` automatically registers machine-wide hooks in the background. Every `git commit` and `git push` across your repositories is immediately shielded with sub-second L3 security.
+> **Zero Configuration Required**: `git-oops` automatically registers machine-wide hooks in the background. Every `git commit` and `git push` across your repositories is immediately shielded with sub-second full-spectrum L1-L8 security.
 
 ### 2. Live Obsidian Web HUD:
 Launch the real-time glassmorphism dashboard in one command:
@@ -140,7 +168,7 @@ git-oops --file broken.py --error "KeyError: 'user_id'"
 # 1ms Zero-AI Symbolic AST repair ($0.00 cost)
 git-oops --file broken.py --error "AttributeError: 'NoneType' object has no attribute 'x'" --solver --yes
 
-# Run full L3 security pre-flight manually
+# Run full security pre-flight manually (L1-L8 local gatekeeper)
 git-oops --pre-commit
 
 # Pre-PR Staff Gatekeeper audit
@@ -180,6 +208,7 @@ We believe developer tools should never spy on you or your AI agents:
 
 - Check out the [Help & Beginner's Manual](https://github.com/Hao610/git-oops/blob/main/HELP.md) for full MCP step-by-step screenshots and command references.
 - Review our [Legal Terms & Disclaimer](https://github.com/Hao610/git-oops/blob/main/LEGAL.md) for licensing, privacy, and autonomous agent safety notices.
+- Read our [Accessibility Statement](https://github.com/Hao610/git-oops/blob/main/ACCESSIBILITY.md) for CLI and Web HUD A11y standards.
 - Read our [Contributing Guidelines](https://github.com/Hao610/git-oops/blob/main/CONTRIBUTING.md) to set up your environment.
 - Review our [Code of Conduct](https://github.com/Hao610/git-oops/blob/main/CODE_OF_CONDUCT.md).
 - To report security vulnerabilities privately, please review [SECURITY.md](https://github.com/Hao610/git-oops/blob/main/SECURITY.md).

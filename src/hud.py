@@ -383,7 +383,7 @@ ENTERPRISE_HTML_TEMPLATE = """<!DOCTYPE html>
             <div class="brand-logo">⚡</div>
             <div class="brand-title">
                 <h1>GIT-OOPS ENTERPRISE // SAFETY HARNESS</h1>
-                <div class="brand-sub">DEFENSE PLATFORM // v{{VERSION}} (ACTIVE L3 DEFENSE)</div>
+                <div class="brand-sub">DEFENSE PLATFORM // v{{VERSION}} (ACTIVE L8 FULL DEFENSE)</div>
             </div>
         </div>
         <div class="header-actions">
@@ -652,7 +652,7 @@ class OopsHUDHandler(BaseHTTPRequestHandler):
                 try:
                     from src import __version__
                 except Exception:
-                    __version__ = "1.0.5"
+                    __version__ = "1.1.0"
 
             rendered = ENTERPRISE_HTML_TEMPLATE.replace("{{VERSION}}", __version__)
             self.wfile.write(rendered.encode("utf-8"))

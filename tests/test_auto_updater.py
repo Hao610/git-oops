@@ -1,5 +1,5 @@
 """
-Unit test suite for Git-Oops Autonomous Auto-Updater (v1.0.5)
+Unit test suite for Git-Oops Autonomous Auto-Updater (v1.1.0)
 """
 
 import sys
@@ -19,7 +19,7 @@ def test_version_parsing_and_comparison():
     v2 = _parse_version("1.0.1")
     v3 = _parse_version("1.0.2")
     v4 = _parse_version("1.0.4")
-    v5 = _parse_version("1.0.5")
+    v5 = _parse_version("1.1.0")
 
     assert v2 > v1
     assert v3 > v2
@@ -50,7 +50,7 @@ def test_background_self_upgrade_non_blocking():
 def test_cli_version_flag():
     import subprocess
     out = subprocess.check_output([sys.executable, "-m", "git_oops", "--version"], text=True)
-    assert "git-oops v1.0.5" in out
+    assert "git-oops v1.1.0" in out
 
 
 def test_cli_status_short_flag():

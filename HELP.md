@@ -222,11 +222,11 @@ Standard linters check formatting and known syntax errors on static code, but th
 4. Don't provide an isolated shadow workspace or multi-agent concurrency mutex locks.
 `git-oops` is an active **runtime safety harness and autonomous supervisor** specifically built for the era of AI coding agents.
 
-### Q13: What new features and flags are available in v1.0.5 (Enterprise Edition)?
-v1.0.5 introduces autonomous zero-touch auto-updating upon computer boot, background silent self-upgrading, zero-configuration global protection, top-level `git_oops` namespace, and powerful new commands:
+### Q13: What new features and flags are available in v1.1.0 (The Eight Pillars Edition)?
+v1.1.0 establishes the complete L1 to L8 defense continuum (from terminal crash interception to cognitive anti-slop and human operator sanity guards), background silent self-upgrading, top-level `git_oops` namespace, and enterprise commands:
 - **`python -m git_oops`** or **`git-oops`**: Runs anywhere with zero Windows Smart App Control unsigned binary warnings.
-- **`git-oops --hud`**: Launches the Obsidian Glassmorphism Web HUD (`http://localhost:8443`) for real-time telemetry.
-- **`git-oops --pre-commit`**: Manually executes the sub-second (<0.1s) L3 local CI/CD security pre-flight check.
+- **`git-oops --hud`**: Launches the Obsidian Glassmorphism Web HUD (`http://localhost:8443`) for real-time telemetry (L8 full defense).
+- **`git-oops --pre-commit`**: Executes the sub-second pre-flight checks (L1-L8 local gatekeeper).
 - **`git-oops --pre-push`**: Verifies branch protection and checks outgoing commits before pushing.
 - **`git-oops --solver`**: 1ms zero-AI symbolic deterministic crash solver ($0.00 cost, 0 tokens).
 - **`git-oops --salvage`**: Git reflog autopsy to resurrect lost commits after an agent disaster.
