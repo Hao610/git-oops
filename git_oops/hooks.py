@@ -18,6 +18,13 @@ from typing import List, Dict, Any, Tuple, Optional
 from git_oops.supply_chain import check_typosquatting
 from git_oops.squeezer import redact_secrets
 from git_oops.rules import load_security_rules, trigger_ota_update_background
+from git_oops.watchdog import is_workstation_frozen
+from git_oops.firewall import verify_human_affirmation
+from git_oops.sentinel import (
+    check_test_assertion_guard,
+    check_nesting_and_complexity,
+    check_zombie_files,
+)
 
 
 # Path definitions
@@ -99,7 +106,7 @@ def setup_global_hooks(force: bool = False) -> Tuple[bool, str]:
                 ["git", "config", "--global", "core.hooksPath", hooks_dir_str],
                 check=True, capture_output=True
             )
-            MARKER_FILE.write_text("v1.1.2", encoding="utf-8")
+            MARKER_FILE.write_text("v1.2.0", encoding="utf-8")
             return True, f"Global git hooks installed cleanly at {hooks_dir_str}"
         else:
             return False, f"Existing custom core.hooksPath detected: '{existing_path}'. Not overwriting without --force."
@@ -232,96 +239,69 @@ class CodeQLASTVisitor(ast.NodeVisitor):
                     self.tainted_vars.add(target.id)
         self.generic_visit(node)
 
-    def visit_Call(self, node: ast.Call):
-        func_name = ""
-        full_call = ""
+    def _resolve_call_name(self, node: ast.Call) -> Tuple[str, str]:
         if isinstance(node.func, ast.Name):
-            func_name = node.func.id
-            full_call = func_name
-        elif isinstance(node.func, ast.Attribute):
-            func_name = node.func.attr
+            return node.func.id, node.func.id
+        if isinstance(node.func, ast.Attribute):
             val_id = getattr(node.func.value, "id", "")
-            full_call = f"{val_id}.{func_name}" if val_id else func_name
+            attr = node.func.attr
+            return attr, (f"{val_id}.{attr}" if val_id else attr)
+        return "", ""
 
-        # 0. User-defined custom forbidden calls (Additive security check)
+    def _check_custom_and_eval(self, node: ast.Call, func_name: str, full_call: str):
         for forb in self.custom_forbidden_calls:
             if forb in (full_call, func_name):
                 self.findings.append({
-                    "rule": "custom/forbidden-call",
-                    "cwe": "CWE-CUSTOM",
-                    "severity": "CRITICAL",
-                    "line": node.lineno,
-                    "file": self.filename,
+                    "rule": "custom/forbidden-call", "cwe": "CWE-CUSTOM", "severity": "CRITICAL",
+                    "line": node.lineno, "file": self.filename,
                     "msg": f"Custom team policy violation: invocation of '{forb}' is strictly forbidden."
                 })
-
-        # 1. CWE-95: Dangerous eval/exec
         if func_name in ("eval", "exec"):
             self.findings.append({
-                "rule": "py/dangerous-eval",
-                "cwe": "CWE-95",
-                "severity": "CRITICAL",
-                "line": node.lineno,
-                "file": self.filename,
+                "rule": "py/dangerous-eval", "cwe": "CWE-95", "severity": "CRITICAL",
+                "line": node.lineno, "file": self.filename,
                 "msg": f"Direct use of {func_name}() detected. Potential arbitrary code execution."
             })
 
-        # 2. CWE-78: Command Injection
-        if func_name == "system" or (isinstance(node.func, ast.Attribute) and getattr(node.func.value, "id", "") == "os" and node.func.attr == "system"):
-            if node.args and (isinstance(node.args[0], (ast.BinOp, ast.JoinedStr))):
-                self.findings.append({
-                    "rule": "py/command-injection",
-                    "cwe": "CWE-78",
-                    "severity": "CRITICAL",
-                    "line": node.lineno,
-                    "file": self.filename,
-                    "msg": "Unsanitized command execution via os.system() with dynamic string concatenation."
-                })
+    def _check_command_injection(self, node: ast.Call, func_name: str):
+        has_dyn_arg = bool(node.args and isinstance(node.args[0], (ast.BinOp, ast.JoinedStr)))
+        if func_name == "system" and has_dyn_arg:
+            self.findings.append({
+                "rule": "py/command-injection", "cwe": "CWE-78", "severity": "CRITICAL",
+                "line": node.lineno, "file": self.filename,
+                "msg": "Unsanitized command execution via os.system() with dynamic string concatenation."
+            })
+        if any(kw.arg == "shell" and isinstance(kw.value, ast.Constant) and kw.value.value is True for kw in node.keywords) and has_dyn_arg:
+            self.findings.append({
+                "rule": "py/command-injection", "cwe": "CWE-78", "severity": "HIGH",
+                "line": node.lineno, "file": self.filename,
+                "msg": "subprocess call with shell=True and dynamic string interpolation."
+            })
 
-        for kw in node.keywords:
-            if kw.arg == "shell" and isinstance(kw.value, ast.Constant) and kw.value.value is True:
-                if node.args and isinstance(node.args[0], (ast.BinOp, ast.JoinedStr)):
-                    self.findings.append({
-                        "rule": "py/command-injection",
-                        "cwe": "CWE-78",
-                        "severity": "HIGH",
-                        "line": node.lineno,
-                        "file": self.filename,
-                        "msg": "subprocess call with shell=True and dynamic string interpolation."
-                    })
-
-        # 3. CWE-89: SQL Injection in cursor.execute
-        if func_name in ("execute", "executemany"):
-            is_tainted = False
-            if node.args:
-                arg0 = node.args[0]
-                if isinstance(arg0, (ast.BinOp, ast.JoinedStr)):
-                    is_tainted = True
-                elif isinstance(arg0, ast.Name) and arg0.id in self.tainted_vars:
-                    is_tainted = True
-            if is_tainted:
+    def _check_sql_and_logging(self, node: ast.Call, func_name: str):
+        if func_name in ("execute", "executemany") and node.args:
+            arg0 = node.args[0]
+            if isinstance(arg0, (ast.BinOp, ast.JoinedStr)) or (isinstance(arg0, ast.Name) and arg0.id in self.tainted_vars):
                 self.findings.append({
-                    "rule": "py/sql-injection",
-                    "cwe": "CWE-89",
-                    "severity": "CRITICAL",
-                    "line": node.lineno,
-                    "file": self.filename,
+                    "rule": "py/sql-injection", "cwe": "CWE-89", "severity": "CRITICAL",
+                    "line": node.lineno, "file": self.filename,
                     "msg": "Potential SQL injection: execute() called with dynamic string concatenation or tainted variable."
                 })
-
-        # 4. CWE-532: Cleartext logging of sensitive variables
         if func_name in ("debug", "info", "warning", "error", "print"):
+            sensitive = ("password", "passwd", "secret", "apikey", "api_key", "token")
             for arg in node.args:
-                if isinstance(arg, ast.Name) and any(s in arg.id.lower() for s in ("password", "passwd", "secret", "apikey", "api_key", "token")):
+                if isinstance(arg, ast.Name) and any(s in arg.id.lower() for s in sensitive):
                     self.findings.append({
-                        "rule": "py/clear-text-logging-sensitive-data",
-                        "cwe": "CWE-532",
-                        "severity": "MEDIUM",
-                        "line": node.lineno,
-                        "file": self.filename,
+                        "rule": "py/clear-text-logging-sensitive-data", "cwe": "CWE-532", "severity": "MEDIUM",
+                        "line": node.lineno, "file": self.filename,
                         "msg": f"Cleartext logging of sensitive variable '{arg.id}'."
                     })
 
+    def visit_Call(self, node: ast.Call):
+        func_name, full_call = self._resolve_call_name(node)
+        self._check_custom_and_eval(node, func_name, full_call)
+        self._check_command_injection(node, func_name)
+        self._check_sql_and_logging(node, func_name)
         self.generic_visit(node)
 
 
@@ -353,150 +333,271 @@ def scan_file_ast(file_path: str, custom_forbidden_calls: list = None) -> List[D
 
 
 # ---------------------------------------------------------------------------
-# 4. L3 Local Pre-Flight Orchestrator (<0.3s)
+# 4. L6 Intent-Drift & Scope Limiter + L4/L8 Pre-Flight Orchestrator
 # ---------------------------------------------------------------------------
+
+def _get_scope_file() -> Path:
+    home = os.environ.get("GIT_OOPS_HOME", str(GIT_OOPS_HOME))
+    return Path(home) / "scope.json"
+
+
+def set_task_scope(patterns: List[str], max_files: Optional[int] = None) -> Dict[str, Any]:
+    """Configures allowed directory/file scope and max-files blast-radius limit."""
+    scope_file = _get_scope_file()
+    scope_file.parent.mkdir(parents=True, exist_ok=True)
+    cleaned = [p.strip().replace("\\", "/") for p in patterns if p.strip()]
+    data = {"patterns": cleaned, "max_files": max_files}
+    scope_file.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    return data
+
+
+def get_task_scope() -> Optional[Dict[str, Any]]:
+    """Loads active L6 task scope boundaries if configured."""
+    scope_file = _get_scope_file()
+    if not scope_file.exists():
+        return None
+    try:
+        return json.loads(scope_file.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+def clear_task_scope() -> None:
+    """Removes active L6 task scope restrictions."""
+    scope_file = _get_scope_file()
+    if scope_file.exists():
+        scope_file.unlink()
+
+
+def check_scope_limits(staged_files: List[str]) -> List[Dict[str, Any]]:
+    """Verifies that staged files stay within declared L6 scope patterns and max_files."""
+    scope = get_task_scope()
+    if not scope:
+        return []
+    violations: List[Dict[str, Any]] = []
+    max_files = scope.get("max_files")
+    if max_files is not None and len(staged_files) > int(max_files):
+        violations.append({
+            "rule": "l6/blast-radius-max-files",
+            "cwe": "CWE-SCOPE-DRIFT",
+            "severity": "CRITICAL",
+            "line": 1,
+            "file": "staged diff",
+            "msg": f"[OOPS L6 SCOPE DRIFT] Staged {len(staged_files)} files, exceeding max_files limit of {max_files}.",
+        })
+    patterns = scope.get("patterns") or []
+    if patterns:
+        for fpath in staged_files:
+            norm = fpath.replace("\\", "/")
+            if not any(pat in norm for pat in patterns):
+                violations.append({
+                    "rule": "l6/intent-scope-violation",
+                    "cwe": "CWE-SCOPE-DRIFT",
+                    "severity": "CRITICAL",
+                    "line": 1,
+                    "file": fpath,
+                    "msg": f"[OOPS L6 SCOPE DRIFT] '{fpath}' is outside declared task scope ({', '.join(patterns)}).",
+                })
+    return violations
+
+
+def _scan_staged_python_files(staged_files: List[str]) -> List[Dict[str, Any]]:
+    """Runs AST CWE and L4 complexity/nesting checks on staged Python files."""
+    findings: List[Dict[str, Any]] = []
+    for filepath in staged_files:
+        if not filepath.endswith(".py") or not os.path.exists(filepath):
+            continue
+        findings.extend(scan_file_ast(filepath))
+        norm = filepath.replace("\\", "/").lower()
+        if not any(t in norm for t in ("tests/", "test_", "/tests/")):
+            try:
+                with open(filepath, "r", encoding="utf-8", errors="replace") as f:
+                    ok_comp, comp_reason = check_nesting_and_complexity(f.read())
+                if not ok_comp and comp_reason:
+                    findings.append({
+                        "rule": "l4/anti-slop-complexity",
+                        "cwe": "CWE-ANTI-SLOP",
+                        "severity": "HIGH",
+                        "line": 1,
+                        "file": filepath,
+                        "msg": comp_reason,
+                    })
+            except Exception:
+                pass
+    return findings
+
+
+def _extract_dep_candidates(filepath: str, content: str) -> List[str]:
+    """Extracts package names from requirements.txt, pyproject.toml, or setup.py."""
+    import re
+    candidates: List[str] = []
+    if filepath == "requirements.txt":
+        for line in content.splitlines():
+            stripped = line.strip()
+            if stripped and not stripped.startswith("#"):
+                m = re.match(r'^([a-zA-Z0-9_\-]+)', stripped)
+                if m:
+                    candidates.append(m.group(1))
+    elif filepath in ("pyproject.toml", "setup.py"):
+        blocks = re.findall(r'(?:dependencies|install_requires|requires)\s*=\s*\[(.*?)\]', content, re.DOTALL)
+        for block in blocks:
+            candidates.extend(re.findall(r'["\']([a-zA-Z0-9_\-]+)', block))
+    return candidates
+
+
+def _scan_staged_dependencies(staged_files: List[str]) -> List[Dict[str, Any]]:
+    """Audits staged dependency manifests against OTA blacklists and typosquatting."""
+    findings: List[Dict[str, Any]] = []
+    dynamic_rules = load_security_rules()
+    malicious_set = set(dynamic_rules.get("malicious_packages", []))
+
+    for filepath in staged_files:
+        if filepath not in ("requirements.txt", "pyproject.toml", "setup.py") or not os.path.exists(filepath):
+            continue
+        try:
+            with open(filepath, "r", encoding="utf-8", errors="replace") as f:
+                pkg_candidates = _extract_dep_candidates(filepath, f.read())
+            for cand in pkg_candidates:
+                if cand.lower() in malicious_set:
+                    findings.append({
+                        "rule": "supply-chain/known-malicious-package",
+                        "cwe": "CWE-1357",
+                        "severity": "CRITICAL",
+                        "line": 1,
+                        "file": filepath,
+                        "msg": f"Package '{cand}' is listed on the active OTA malicious security blacklist.",
+                    })
+                    continue
+                safe, reason = check_typosquatting(cand)
+                if not safe:
+                    findings.append({
+                        "rule": "supply-chain/typosquatting",
+                        "cwe": "CWE-1357",
+                        "severity": "CRITICAL",
+                        "line": 1,
+                        "file": filepath,
+                        "msg": reason,
+                    })
+        except Exception:
+            pass
+    return findings
+
+
+def _run_custom_oops_scripts() -> List[Dict[str, Any]]:
+    """Executes user-defined custom CI/CD scripts if present."""
+    findings: List[Dict[str, Any]] = []
+    custom_scripts = [
+        Path(".oops/check.py"),
+        Path(".oops/check.sh"),
+        Path(".oops/pre-commit.sh"),
+        Path(".git/hooks/pre-commit.local"),
+    ]
+    for script in custom_scripts:
+        if not script.exists():
+            continue
+        try:
+            cmd = [sys.executable, str(script)] if script.suffix == ".py" else [str(script)]
+            c_proc = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            if c_proc.returncode != 0:
+                findings.append({
+                    "rule": "custom/user-script-failed",
+                    "severity": "CRITICAL",
+                    "line": 1,
+                    "file": str(script),
+                    "msg": f"Custom user CI/CD script '{script}' failed:\n{(c_proc.stderr or c_proc.stdout).strip()}",
+                })
+        except Exception as ex:
+            findings.append({
+                "rule": "custom/user-script-error",
+                "severity": "CRITICAL",
+                "line": 1,
+                "file": str(script),
+                "msg": f"Error running user custom script '{script}': {str(ex)}",
+            })
+    return findings
+
+
+def _format_preflight_report(passed: bool, violations: List[Dict[str, Any]], staged_count: int) -> str:
+    """Formats the L1-L8 pre-flight verification report."""
+    if passed:
+        return f"⚡ [git-oops] L3 Local Pre-Flight Check PASSED ({staged_count} staged files verified in <0.1s)."
+    lines = ["🛑 [git-oops] L3 Local Pre-Flight CI/CD Security Check FAILED:"]
+    for v in violations:
+        sev = v.get("severity", "MEDIUM")
+        rule = v.get("rule") or v.get("type", "SECURITY_ALERT")
+        msg = v.get("msg") or v.get("label", "Violation detected")
+        loc = f"{v.get('file', 'staged diff')}:{v.get('line', '?')}"
+        lines.append(f"  • [{sev}] {rule} at {loc}")
+        lines.append(f"    Reason: {msg}")
+    lines.append("\nCommit BLOCKED by git-oops. Fix security issues or run with --no-verify if intentional.")
+    return "\n".join(lines)
+
 
 def run_l3_preflight() -> Tuple[bool, List[Dict[str, Any]], str]:
     """
-    Executes complete local L3 CI/CD pre-flight checks on staged git changes:
-    - Tier 1: Secrets & High-Entropy Leak Check
-    - Tier 2: CodeQL AST Security CWE Rules
-    - Tier 3: Supply-Chain & Typosquatting Audits
+    Executes complete local L1-L8 CI/CD pre-flight checks on staged git changes:
+    - Emergency Freeze Gate (L8)
+    - Zombie File & Scope Limiter (L4 / L6)
+    - Secrets & High-Entropy Leak Check (L5)
+    - Test-Deletion Fraud Interceptor (L4)
+    - CodeQL AST Security CWE Rules & Complexity Limits (L2 / L4)
+    - Supply-Chain & Typosquatting Audits (L5)
     Returns: (passed: bool, violations: list, formatted_report: str)
     """
-    # 1. Get staged files
+    frozen, freeze_reason = is_workstation_frozen()
+    if frozen:
+        v = [{
+            "rule": "l8/emergency-freeze",
+            "severity": "CRITICAL",
+            "line": 1,
+            "file": "workstation",
+            "msg": f"EMERGENCY FREEZE ACTIVE: {freeze_reason}. Run 'git-oops --unfreeze' to resume.",
+        }]
+        return False, v, f"🚨 [git-oops] BLOCKED by Emergency Freeze: {freeze_reason}"
+
     staged_proc = subprocess.run(
         ["git", "diff", "--cached", "--name-only"],
         capture_output=True, text=True, errors="replace"
     )
     staged_files = [f.strip() for f in staged_proc.stdout.splitlines() if f.strip()]
-
     if not staged_files:
         return True, [], "No staged changes detected. Pre-flight passed."
 
-    violations: List[Dict[str, Any]] = []
-
-    # 2. Check diff text for secrets
     diff_proc = subprocess.run(
         ["git", "diff", "--cached"],
         capture_output=True, text=True, errors="replace"
     )
     diff_text = diff_proc.stdout
 
-    secret_findings = scan_diff_for_secrets(diff_text)
-    violations.extend(secret_findings)
-
-    # 3. Check AST CWEs on staged Python files
-    for filepath in staged_files:
-        if filepath.endswith(".py") and os.path.exists(filepath):
-            ast_findings = scan_file_ast(filepath)
-            violations.extend(ast_findings)
-
-        # 4. Check requirements.txt or dependencies for typosquatting & dynamic blacklists
-        if filepath in ("requirements.txt", "pyproject.toml", "setup.py") and os.path.exists(filepath):
-            try:
-                with open(filepath, "r", encoding="utf-8", errors="replace") as f:
-                    content = f.read()
-                
-                import re
-                pkg_candidates = []
-                if filepath == "requirements.txt":
-                    for line in content.splitlines():
-                        line = line.strip()
-                        if line and not line.startswith("#"):
-                            m = re.match(r'^([a-zA-Z0-9_\-]+)', line)
-                            if m:
-                                pkg_candidates.append(m.group(1))
-                elif filepath in ("pyproject.toml", "setup.py"):
-                    dep_blocks = re.findall(r'(?:dependencies|install_requires|requires)\s*=\s*\[(.*?)\]', content, re.DOTALL)
-                    for block in dep_blocks:
-                        pkgs = re.findall(r'["\']([a-zA-Z0-9_\-]+)', block)
-                        pkg_candidates.extend(pkgs)
-
-                dynamic_rules = load_security_rules()
-                malicious_set = set(dynamic_rules.get("malicious_packages", []))
-
-                for cand in pkg_candidates:
-                    cand_lower = cand.lower()
-                    if cand_lower in malicious_set:
-                        violations.append({
-                            "rule": "supply-chain/known-malicious-package",
-                            "cwe": "CWE-1357",
-                            "severity": "CRITICAL",
-                            "line": 1,
-                            "file": filepath,
-                            "msg": f"Package '{cand}' is listed on the active OTA malicious security blacklist."
-                        })
-                        continue
-
-                    safe, reason = check_typosquatting(cand)
-                    if not safe:
-                        violations.append({
-                            "rule": "supply-chain/typosquatting",
-                            "cwe": "CWE-1357",
-                            "severity": "CRITICAL",
-                            "line": 1,
-                            "file": filepath,
-                            "msg": reason
-                        })
-            except Exception:
-                pass
-
-    # 5. Execute user-defined custom CI/CD check scripts (.oops/check.py, .oops/check.sh, etc.)
-    custom_scripts = [
-        Path(".oops/check.py"),
-        Path(".oops/check.sh"),
-        Path(".oops/pre-commit.sh"),
-        Path(".git/hooks/pre-commit.local")
-    ]
-    for script in custom_scripts:
-        if script.exists():
-            try:
-                cmd = [sys.executable, str(script)] if script.suffix == ".py" else [str(script)]
-                c_proc = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-                if c_proc.returncode != 0:
-                    violations.append({
-                        "rule": "custom/user-script-failed",
-                        "severity": "CRITICAL",
-                        "line": 1,
-                        "file": str(script),
-                        "msg": f"Custom user CI/CD script '{script}' failed:\n{(c_proc.stderr or c_proc.stdout).strip()}"
-                    })
-            except Exception as ex:
-                violations.append({
-                    "rule": "custom/user-script-error",
-                    "severity": "CRITICAL",
-                    "line": 1,
-                    "file": str(script),
-                    "msg": f"Error running user custom script '{script}': {str(ex)}"
-                })
+    violations: List[Dict[str, Any]] = []
+    violations.extend(check_zombie_files(staged_files))
+    violations.extend(check_scope_limits(staged_files))
+    violations.extend(scan_diff_for_secrets(diff_text))
+    _, assertion_violations = check_test_assertion_guard(diff_text)
+    violations.extend(assertion_violations)
+    violations.extend(_scan_staged_python_files(staged_files))
+    violations.extend(_scan_staged_dependencies(staged_files))
+    violations.extend(_run_custom_oops_scripts())
 
     passed = len([v for v in violations if v.get("severity") in ("CRITICAL", "HIGH")]) == 0
-
-    # Build report
-    report_lines = []
-    if not passed:
-        report_lines.append("🛑 [git-oops] L3 Local Pre-Flight CI/CD Security Check FAILED:")
-        for v in violations:
-            sev = v.get("severity", "MEDIUM")
-            rule = v.get("rule") or v.get("type", "SECURITY_ALERT")
-            msg = v.get("msg") or v.get("label", "Violation detected")
-            loc = f"{v.get('file', 'staged diff')}:{v.get('line', '?')}"
-            report_lines.append(f"  • [{sev}] {rule} at {loc}")
-            report_lines.append(f"    Reason: {msg}")
-        report_lines.append("\nCommit BLOCKED by git-oops. Fix security issues or run with --no-verify if intentional.")
-    else:
-        report_lines.append(f"⚡ [git-oops] L3 Local Pre-Flight Check PASSED ({len(staged_files)} staged files verified in <0.1s).")
-
-    return passed, violations, "\n".join(report_lines)
+    return passed, violations, _format_preflight_report(passed, violations, len(staged_files))
 
 
 def run_pre_push_check() -> Tuple[bool, str]:
     """
     Executes pre-push verification:
-    - Protects direct pushes to main/master without review
-    - Ensures clean commit history
+    - Enforces Emergency Freeze Lock (L8)
+    - Enforces Human Affirmation Gate for AI agents (L8)
+    - Scans outgoing commits for secret leaks (L5)
     """
+    frozen, freeze_reason = is_workstation_frozen()
+    if frozen:
+        return False, f"🚨 [git-oops] Pre-push BLOCKED by Emergency Freeze: {freeze_reason}"
+
+    affirmed, affirm_msg = verify_human_affirmation("git push")
+    if not affirmed:
+        return False, f"🛑 [git-oops] Pre-push BLOCKED: {affirm_msg}"
+
     # Check current branch
     branch_proc = subprocess.run(
         ["git", "rev-parse", "--abbrev-ref", "HEAD"],

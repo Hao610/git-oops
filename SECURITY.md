@@ -6,6 +6,7 @@ We release patches and security updates for the current active release line.
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.2.x   | :white_check_mark: |
 | 1.1.x   | :white_check_mark: |
 | 1.0.x   | :white_check_mark: |
 | 0.2.x   | :white_check_mark: |
@@ -45,5 +46,5 @@ If you discover a security vulnerability within `git-oops`, please **do not open
 
 ### What to Expect:
 - **Initial Response**: Within 24-48 hours acknowledging receipt of your report.
-- **Triage & Patch**: A fix will be developed in a private branch and released promptly under `1.1.x`.
+- **Triage & Patch**: A fix will be developed in a private branch and released promptly under `1.2.x`.
 - **Credit**: You will be credited in the security advisory and release notes (unless you prefer anonymity).

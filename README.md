@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ git-oops v1.1.2 (The Eight Pillars Edition)
+# ⚡ git-oops v1.2.0 (The Eight Pillars Edition)
 
 ### *The Zero-Step Autonomous AI Agent Safety Harness & Terminal Crash Interceptor.*
 **Human Mode: Roasted by a Staff Engineer │ Agent Mode: The Headless Shield for Coding Agents**
@@ -8,9 +8,9 @@
 ![git-oops Hero Banner](https://raw.githubusercontent.com/Hao610/git-oops/main/assets/readme-hero.jpg)
 
 [![CI Suite](https://github.com/Hao610/git-oops/actions/workflows/ci.yml/badge.svg)](https://github.com/Hao610/git-oops/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/Release-v1.1.2%20The%20Eight%20Pillars-blue.svg)](https://github.com/Hao610/git-oops/releases)
+[![Version](https://img.shields.io/badge/Release-v1.2.0%20The%20Eight%20Pillars-blue.svg)](https://github.com/Hao610/git-oops/releases)
 [![Auto-Updater](https://img.shields.io/badge/Auto--Updater-Autonomous%20Zero--Touch-blue)](https://github.com/Hao610/git-oops)
-[![PyPI](https://img.shields.io/badge/pypi-v1.1.2-blue.svg)](https://pypi.org/project/git-oops/)
+[![PyPI](https://img.shields.io/badge/pypi-v1.2.0-blue.svg)](https://pypi.org/project/git-oops/)
 [![Provenance](https://img.shields.io/badge/SLSA-Verified%20Provenance-brightgreen)](https://pypi.org/project/git-oops/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/Hao610/git-oops/blob/main/LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python)](https://www.python.org/)
@@ -166,6 +166,12 @@ git-oops --review-pr
 
 # Resurrect lost work after an agent wipeout
 git-oops --salvage
+
+# Emergency Hardware Freeze & L6 Scope Limiter (v1.2.0)
+git-oops --freeze
+git-oops --unfreeze
+git-oops --scope "auth,models" --max-files 4
+git-oops --verify-gate src/app.py
 ```
 
 ---

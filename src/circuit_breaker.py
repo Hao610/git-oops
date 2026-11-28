@@ -127,3 +127,54 @@ def set_config_value(key: str, value: Any):
     cfg[key] = value
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=2)
+
+
+def _get_velocity_file() -> str:
+    home = os.environ.get("GIT_OOPS_HOME", CACHE_DIR)
+    os.makedirs(home, exist_ok=True)
+    return os.path.join(home, "release_velocity.json")
+
+
+def check_release_velocity(max_releases_per_window: int = 1, window_seconds: int = 3600) -> tuple:
+    """
+    Version Churn & Panic-Bumping Circuit Breaker.
+    Limits release tag creation to max_releases_per_window within window_seconds.
+    """
+    v_file = _get_velocity_file()
+    if not os.path.exists(v_file):
+        return True, "Release velocity within safe bounds."
+    try:
+        with open(v_file, "r", encoding="utf-8") as f:
+            records = json.load(f)
+    except Exception:
+        return True, "Release velocity within safe bounds."
+
+    now = time.time()
+    recent = [r for r in records if (now - float(r.get("timestamp", 0))) < window_seconds]
+    if len(recent) >= max_releases_per_window:
+        last_tag = recent[-1].get("tag", "unknown")
+        return False, (
+            f"[OOPS CIRCUIT BREAKER: VERSION CHURN DETECTED]\n"
+            f"Agent/Operator attempted {len(recent) + 1} releases within {window_seconds // 60} minutes "
+            f"(previous: {last_tag}). Release blocked to protect PyPI immutable history."
+        )
+    return True, "Release velocity within safe bounds."
+
+
+def record_release_tag(tag_name: str) -> None:
+    """Records a release tag timestamp into the velocity ledger."""
+    v_file = _get_velocity_file()
+    records = []
+    if os.path.exists(v_file):
+        try:
+            with open(v_file, "r", encoding="utf-8") as f:
+                records = json.load(f)
+        except Exception:
+            records = []
+    records.append({
+        "tag": tag_name,
+        "timestamp": time.time(),
+        "recorded_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+    })
+    with open(v_file, "w", encoding="utf-8") as f:
+        json.dump(records[-20:], f, indent=2)

@@ -41,13 +41,13 @@ jobs:
           git tag -f "$TARGET_TAG"
           git push origin "$TARGET_TAG" --force
 
-          # Check if Release exists; create or edit it dynamically
+          # Check if Release exists; preserve human notes if already present
           if gh release view "$TARGET_TAG" >/dev/null 2>&1; then
-            echo "Release $TARGET_TAG exists, updating target..."
-            gh release edit "$TARGET_TAG" --target "$GITHUB_SHA" --notes-file .github/release_notes.md --draft=false
+            echo "Release $TARGET_TAG already exists. Preserving human release notes and updating target..."
+            gh release edit "$TARGET_TAG" --target "$GITHUB_SHA" --draft=false
           else
-            echo "Release $TARGET_TAG does not exist, creating dynamically..."
-            gh release create "$TARGET_TAG" --title "⚡ git-oops $TARGET_TAG: Enterprise Edition" --notes-file .github/release_notes.md --target "$GITHUB_SHA" --draft=false
+            echo "Release $TARGET_TAG does not exist, creating dynamically with auto-generated changelog..."
+            gh release create "$TARGET_TAG" --title "⚡ git-oops $TARGET_TAG: Sovereign AI Governance Edition" --generate-notes --target "$GITHUB_SHA" --draft=false
           fi
 
       - name: Set up Python for PyPI Packaging

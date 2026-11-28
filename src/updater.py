@@ -1,5 +1,5 @@
 """
-Git-Oops Self-Evolution & Autonomous Auto-Upgrade Engine (v1.1.2)
+Git-Oops Self-Evolution & Autonomous Auto-Upgrade Engine (v1.2.0)
 1. Automatic Windows/POSIX Startup Silent Auto-Updater (Runs quietly on computer boot when network connects).
 2. Zero-Latency Background Daemon Auto-Upgrade (Checks PyPI in background thread on routine git commands).
 3. Runtime health evaluation & auto-migration against bit-rot.
@@ -32,7 +32,7 @@ def get_current_version() -> str:
             from src import __version__
             return __version__
         except Exception:
-            return "1.1.2"
+            return "1.2.0"
 
 
 def _parse_version(v_str: str) -> Tuple[int, ...]:
@@ -76,13 +76,12 @@ def check_for_pypi_update(timeout: float = 3.0) -> Tuple[bool, str, str]:
             headers={"User-Agent": f"git-oops-autoupdater/{current_ver}"}
         )
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            if resp.status == 200:
-                data = json.loads(resp.read().decode("utf-8"))
-                remote_ver = data.get("info", {}).get("version", "")
-                if remote_ver:
-                    if _parse_version(remote_ver) > _parse_version(current_ver):
-                        return True, remote_ver, current_ver
-                    return False, remote_ver, current_ver
+            if resp.status != 200:
+                return False, current_ver, current_ver
+            data = json.loads(resp.read().decode("utf-8"))
+        remote_ver = data.get("info", {}).get("version", "")
+        if remote_ver:
+            return (_parse_version(remote_ver) > _parse_version(current_ver)), remote_ver, current_ver
     except Exception:
         pass
     return False, current_ver, current_ver
@@ -153,60 +152,51 @@ def trigger_background_self_upgrade():
     t.start()
 
 
+def _setup_windows_startup() -> bool:
+    appdata = os.environ.get("APPDATA")
+    if not appdata:
+        return False
+    startup_dir = Path(appdata) / r"Microsoft\Windows\Start Menu\Programs\Startup"
+    startup_dir.mkdir(parents=True, exist_ok=True)
+    vbs_file = startup_dir / "git_oops_autoupdate.vbs"
+    vbs_content = (
+        'Set WshShell = CreateObject("WScript.Shell")\r\n'
+        'WshShell.Run "powershell -WindowStyle Hidden -Command ""Start-Sleep -Seconds 20; '
+        'python -m pip install --upgrade --quiet git-oops""", 0, False\r\n'
+    )
+    if vbs_file.exists() and vbs_file.read_text(encoding="utf-8", errors="replace") == vbs_content:
+        return True
+    vbs_file.write_text(vbs_content, encoding="utf-8")
+    return True
+
+
+def _setup_posix_startup() -> bool:
+    autostart_dir = Path.home() / ".config" / "autostart"
+    autostart_dir.mkdir(parents=True, exist_ok=True)
+    desktop_file = autostart_dir / "git-oops-autoupdate.desktop"
+    content = (
+        "[Desktop Entry]\n"
+        "Type=Application\n"
+        "Name=GitOops AutoUpdater\n"
+        "Exec=sh -c 'sleep 20 && python3 -m pip install --upgrade --quiet git-oops'\n"
+        "Hidden=false\n"
+        "NoDisplay=true\n"
+        "X-GNOME-Autostart-enabled=true\n"
+    )
+    desktop_file.write_text(content, encoding="utf-8")
+    return True
+
+
 def setup_startup_auto_updater() -> bool:
     """
     Configures autonomous silent auto-updating upon user logon / system boot.
-    On Windows: Installs a hidden .vbs launcher in the user's Startup folder.
-    On macOS/Linux: Installs an autostart desktop entry in ~/.config/autostart/.
     Does not require administrator privileges.
     """
     try:
         if sys.platform == "win32":
-            appdata = os.environ.get("APPDATA")
-            if not appdata:
-                return False
-            startup_dir = Path(appdata) / r"Microsoft\Windows\Start Menu\Programs\Startup"
-            if not startup_dir.exists():
-                startup_dir.mkdir(parents=True, exist_ok=True)
-            
-            vbs_file = startup_dir / "git_oops_autoupdate.vbs"
-            # VBS script runs hidden (window style 0, async False)
-            # Waits 20s for network connection to settle after boot, then silently upgrades
-            vbs_content = (
-                'Set WshShell = CreateObject("WScript.Shell")\r\n'
-                'WshShell.Run "powershell -WindowStyle Hidden -Command ""Start-Sleep -Seconds 20; '
-                'python -m pip install --upgrade --quiet git-oops""", 0, False\r\n'
-            )
-            
-            # Avoid rewriting if already identical
-            if vbs_file.exists():
-                try:
-                    with open(vbs_file, "r", encoding="utf-8") as f:
-                        if f.read() == vbs_content:
-                            return True
-                except Exception:
-                    pass
-
-            with open(vbs_file, "w", encoding="utf-8") as f:
-                f.write(vbs_content)
-            return True
-            
-        elif sys.platform.startswith("linux") or sys.platform == "darwin":
-            autostart_dir = Path.home() / ".config" / "autostart"
-            autostart_dir.mkdir(parents=True, exist_ok=True)
-            desktop_file = autostart_dir / "git-oops-autoupdate.desktop"
-            content = (
-                "[Desktop Entry]\n"
-                "Type=Application\n"
-                "Name=GitOops AutoUpdater\n"
-                "Exec=sh -c 'sleep 20 && python3 -m pip install --upgrade --quiet git-oops'\n"
-                "Hidden=false\n"
-                "NoDisplay=true\n"
-                "X-GNOME-Autostart-enabled=true\n"
-            )
-            with open(desktop_file, "w", encoding="utf-8") as f:
-                f.write(content)
-            return True
+            return _setup_windows_startup()
+        if sys.platform.startswith("linux") or sys.platform == "darwin":
+            return _setup_posix_startup()
     except Exception:
         pass
     return False

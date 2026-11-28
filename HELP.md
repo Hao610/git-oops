@@ -222,8 +222,8 @@ Standard linters check formatting and known syntax errors on static code, but th
 4. Don't provide an isolated shadow workspace or multi-agent concurrency mutex locks.
 `git-oops` is an active **runtime safety harness and autonomous supervisor** specifically built for the era of AI coding agents.
 
-### Q13: What new features and flags are available in v1.1.2 (The Eight Pillars Edition)?
-v1.1.2 establishes the complete L1 to L8 defense continuum (from terminal crash interception to cognitive anti-slop and human operator sanity guards), background silent self-upgrading, top-level `git_oops` namespace, and enterprise commands:
+### Q13: What new features and flags are available in v1.2.0 (The Eight Pillars Edition)?
+v1.2.0 establishes the complete L1 to L8 defense continuum (from terminal crash interception to cognitive anti-slop and human operator sanity guards), background silent self-upgrading, top-level `git_oops` namespace, and enterprise commands:
 - **`python -m git_oops`** or **`git-oops`**: Runs anywhere with zero Windows Smart App Control unsigned binary warnings.
 - **`git-oops --hud`**: Launches the Obsidian Glassmorphism Web HUD (`http://localhost:8443`) for real-time telemetry (L8 full defense).
 - **`git-oops --pre-commit`**: Executes the sub-second pre-flight checks (L1-L8 local gatekeeper).
@@ -235,6 +235,10 @@ v1.1.2 establishes the complete L1 to L8 defense continuum (from terminal crash 
 - **`git-oops --hardware`**: Checks battery, thermal state, and process CPU throttling.
 - **`git-oops --local`**: Routes repairs to local Ollama/vLLM for 100% offline air-gapped operation.
 - **`git-oops --update-rules`**: Forces an immediate OTA sync of latest CVEs and security signatures.
+- **`git-oops --freeze` / `--unfreeze` / `--kill-agents`**: Emergency Hardware Freeze lockfile and detached agent process sweep.
+- **`git-oops --scope "<patterns>" --max-files N`**: Locks L6 blast-radius boundaries for autonomous tasks.
+- **`git-oops --verify-gate <file>`**: Runs L4 Anti-Slop cyclomatic complexity and nesting depth gatekeeper.
+- **`git-oops --check-velocity`**: Verifies release tag frequency against the version-churn circuit breaker.
 
 ### Q14: How can I add extra custom security rules or CI/CD checks after `pip install git-oops`?
 `git-oops` implements an **Immutable Baseline + Additive Custom Policy** architecture:

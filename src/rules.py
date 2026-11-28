@@ -24,7 +24,7 @@ SYNC_INTERVAL_SECONDS = 86400
 
 # Built-in offline baseline rules (Hardened fallback - zero network required)
 OFFLINE_BASELINE_RULES: Dict[str, Any] = {
-    "version": "1.1.2-baseline",
+    "version": "1.2.0-baseline",
     "last_updated": 1731550000,
     "secret_patterns": [
         {"pattern": r"(?i)(?:api[_-]?key|secret|password|passwd|auth[_-]?token)\s*[:=]\s*['\"]([a-zA-Z0-9_\-\.]{16,})['\"]", "label": "Exposed Secret Literal", "severity": "CRITICAL"},
@@ -119,56 +119,40 @@ def is_valid_regex(pattern_str: str) -> bool:
         return False
 
 
+def _merge_rule_layer(merged: Dict[str, Any], extra_pkgs: Any, extra_patterns: Any) -> None:
+    """Safely unions package blacklists and valid secret regexes into merged rules."""
+    if isinstance(extra_pkgs, list) and extra_pkgs:
+        merged["malicious_packages"] = sorted(list(set(merged.get("malicious_packages", [])) | set(extra_pkgs)))
+    if isinstance(extra_patterns, list) and extra_patterns:
+        curr_patts = {p["pattern"]: p for p in merged.get("secret_patterns", [])}
+        for p in extra_patterns:
+            if isinstance(p, dict) and is_valid_regex(p.get("pattern", "")):
+                curr_patts[p["pattern"]] = p
+        merged["secret_patterns"] = list(curr_patts.values())
+
+
 def load_security_rules() -> Dict[str, Any]:
     """
     Loads merged security rules with cryptographic integrity and tamper resistance:
     [Hardcoded Immutable Baseline] + [OTA Live Dynamic Signatures] + [User Custom Additions]
     Baseline checks CANNOT be removed, overridden, or hollowed out by tampering.
     """
-    # 1. Start with immutable baseline constant directly from Python memory
     merged = json.loads(json.dumps(OFFLINE_BASELINE_RULES))
 
-    # 2. Layer OTA dynamic signatures if available (with tamper & corruption check)
-    tamper_detected = False
-    try:
-        if RULES_FILE.exists():
+    tamper_detected = not RULES_FILE.exists()
+    if not tamper_detected:
+        try:
             with open(RULES_FILE, "r", encoding="utf-8") as f:
                 ota_data = json.load(f)
-                if isinstance(ota_data, dict):
-                    # Union malicious packages
-                    incoming_pkgs = ota_data.get("malicious_packages", [])
-                    if isinstance(incoming_pkgs, list):
-                        pkgs = set(merged.get("malicious_packages", [])) | set(incoming_pkgs)
-                        merged["malicious_packages"] = sorted(list(pkgs))
-
-                    # Union secret patterns (discarding any invalid or tampered regexes)
-                    curr_patts = {p["pattern"]: p for p in merged.get("secret_patterns", [])}
-                    for p in ota_data.get("secret_patterns", []):
-                        if isinstance(p, dict) and is_valid_regex(p.get("pattern", "")):
-                            curr_patts[p["pattern"]] = p
-                    merged["secret_patterns"] = list(curr_patts.values())
-        else:
+            if isinstance(ota_data, dict):
+                _merge_rule_layer(merged, ota_data.get("malicious_packages"), ota_data.get("secret_patterns"))
+        except Exception:
             tamper_detected = True
-    except Exception:
-        tamper_detected = True
 
-    # 3. Layer User's Custom Additions (Additive-Only)
     user_custom = load_user_custom_rules()
-    if user_custom["extra_banned_packages"]:
-        merged["malicious_packages"] = sorted(list(set(merged.get("malicious_packages", [])) | set(user_custom["extra_banned_packages"])))
-
-    if user_custom["extra_secret_patterns"]:
-        curr_patts = {p["pattern"]: p for p in merged.get("secret_patterns", [])}
-        for p in user_custom["extra_secret_patterns"]:
-            if isinstance(p, dict) and is_valid_regex(p.get("pattern", "")):
-                curr_patts[p["pattern"]] = p
-        merged["secret_patterns"] = list(curr_patts.values())
-
+    _merge_rule_layer(merged, user_custom.get("extra_banned_packages"), user_custom.get("extra_secret_patterns"))
     merged["custom_forbidden_calls"] = user_custom.get("extra_forbidden_calls", [])
 
-    # 4. Anti-Tamper Invariant Check:
-    # Baseline packages and secret patterns must be strictly preserved.
-    # If file was deleted or corrupted, instantly self-heal and re-serialize to disk.
     baseline_pkgs = set(OFFLINE_BASELINE_RULES["malicious_packages"])
     if not baseline_pkgs.issubset(set(merged["malicious_packages"])) or tamper_detected or not RULES_FILE.exists():
         save_security_rules(merged)
@@ -210,6 +194,17 @@ def record_sync_timestamp(status: str = "success"):
         pass
 
 
+def _parse_remote_payload(raw_data: str) -> Optional[Dict[str, Any]]:
+    parsed = json.loads(raw_data)
+    if isinstance(parsed, dict) and "content" in parsed and "encoding" in parsed:
+        import base64
+        decoded = base64.b64decode(parsed["content"]).decode("utf-8")
+        parsed = json.loads(decoded)
+    if isinstance(parsed, dict) and "secret_patterns" in parsed:
+        return parsed
+    return None
+
+
 def fetch_remote_rules(timeout: float = 2.0) -> Tuple[bool, Dict[str, Any]]:
     """
     Attempts to download latest dynamic security rules from remote OTA feed.
@@ -217,21 +212,13 @@ def fetch_remote_rules(timeout: float = 2.0) -> Tuple[bool, Dict[str, Any]]:
     """
     for url in OTA_FEED_URLS:
         try:
-            req = urllib.request.Request(
-                url,
-                headers={"User-Agent": "git-oops-ota-client/1.1.2"}
-            )
+            req = urllib.request.Request(url, headers={"User-Agent": "git-oops-ota-client/1.2.0"})
             with urllib.request.urlopen(req, timeout=timeout) as response:
-                if response.status == 200:
-                    raw_data = response.read().decode("utf-8")
-                    parsed = json.loads(raw_data)
-                    # If returned from GitHub API base64
-                    if isinstance(parsed, dict) and "content" in parsed and "encoding" in parsed:
-                        import base64
-                        decoded = base64.b64decode(parsed["content"]).decode("utf-8")
-                        parsed = json.loads(decoded)
-                    if isinstance(parsed, dict) and "secret_patterns" in parsed:
-                        return True, parsed
+                if response.status != 200:
+                    continue
+                parsed = _parse_remote_payload(response.read().decode("utf-8"))
+                if parsed:
+                    return True, parsed
         except Exception:
             continue
     return False, {}
@@ -266,7 +253,7 @@ def sync_security_rules_foreground(force: bool = False) -> Tuple[bool, str]:
 
     current_rules["malicious_packages"] = merged_pkgs
     current_rules["secret_patterns"] = list(curr_patterns.values())
-    current_rules["version"] = remote_rules.get("version", "1.1.2-ota")
+    current_rules["version"] = remote_rules.get("version", "1.2.0-ota")
     current_rules["last_updated"] = int(time.time())
 
     save_security_rules(current_rules)
