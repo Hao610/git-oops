@@ -141,7 +141,7 @@ def _handle_scope_and_gates(args) -> bool:
 
 
 def _handle_governance_flags(args) -> bool:
-    """Handles v1.2.0 Sovereign Governance & Anti-Slop CLI flags."""
+    """Handles v1.2.1 Sovereign Governance & Anti-Slop CLI flags."""
     return _handle_freeze_and_sweep(args) or _handle_scope_and_gates(args)
 
 
@@ -403,7 +403,7 @@ def _apply_and_report_patch(args, filepath: str, diagnosis: dict) -> None:
 
 def _build_arg_parser(saved_cfg: dict) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="git-oops", description="Brutally honest terminal crash fixer with daily spend-protection circuit breaker.")
-    parser.add_argument("-v", "--version", action="version", version="git-oops v1.2.0 (The Sovereign AI Governance Edition)")
+    parser.add_argument("-v", "--version", action="version", version="git-oops v1.2.1 (The Sovereign AI Governance Edition)")
     parser.add_argument("-f", "--file", help="Path to the file that crashed", default=None)
     parser.add_argument("-e", "--error", help="Error message or traceback string", default=None)
     parser.add_argument("-b", "--budget", help="Daily API spend ceiling in USD (default: $1.00)", type=float, default=saved_cfg.get("daily_budget", 1.0))

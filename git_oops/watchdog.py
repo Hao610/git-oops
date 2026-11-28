@@ -127,10 +127,11 @@ def check_anti_thrashing(filepath: str, patch_str: str, max_oscillations: int = 
     patch repeatedly (thrashing / rabbit hole), it trips the watchdog.
     """
     _ensure_state()
+    history_file = os.path.join(_get_state_dir(), "patch_history.json")
     history = {}
-    if os.path.exists(HISTORY_FILE):
+    if os.path.exists(history_file):
         try:
-            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            with open(history_file, "r", encoding="utf-8") as f:
                 history = json.load(f)
         except Exception:
             history = {}
@@ -149,7 +150,7 @@ def check_anti_thrashing(filepath: str, patch_str: str, max_oscillations: int = 
 
     file_records.append(patch_hash)
     history[filepath] = file_records[-10:]  # Keep last 10 entries
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+    with open(history_file, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2)
 
     return True, "SAFE"
@@ -158,11 +159,12 @@ def check_anti_thrashing(filepath: str, patch_str: str, max_oscillations: int = 
 def acquire_agent_lock(agent_id: str, filepath: str, lease_seconds: int = 30) -> Tuple[bool, str]:
     """Prevents two concurrent agents from overwriting the same file."""
     _ensure_state()
+    lock_file = os.path.join(_get_state_dir(), "agent_locks.json")
     locks = {}
     now = time.time()
-    if os.path.exists(LOCK_FILE):
+    if os.path.exists(lock_file):
         try:
-            with open(LOCK_FILE, "r", encoding="utf-8") as f:
+            with open(lock_file, "r", encoding="utf-8") as f:
                 locks = json.load(f)
         except Exception:
             locks = {}
@@ -178,7 +180,7 @@ def acquire_agent_lock(agent_id: str, filepath: str, lease_seconds: int = 30) ->
         "expires": now + lease_seconds,
         "acquired_at": time.strftime("%Y-%m-%d %H:%M:%S")
     }
-    with open(LOCK_FILE, "w", encoding="utf-8") as f:
+    with open(lock_file, "w", encoding="utf-8") as f:
         json.dump(locks, f, indent=2)
     return True, "LOCK_ACQUIRED"
 
@@ -186,14 +188,15 @@ def acquire_agent_lock(agent_id: str, filepath: str, lease_seconds: int = 30) ->
 def release_agent_lock(agent_id: str, filepath: str):
     """Releases lock on file."""
     _ensure_state()
-    if not os.path.exists(LOCK_FILE):
+    lock_file = os.path.join(_get_state_dir(), "agent_locks.json")
+    if not os.path.exists(lock_file):
         return
     try:
-        with open(LOCK_FILE, "r", encoding="utf-8") as f:
+        with open(lock_file, "r", encoding="utf-8") as f:
             locks = json.load(f)
         if filepath in locks and locks[filepath].get("agent_id") == agent_id:
             del locks[filepath]
-            with open(LOCK_FILE, "w", encoding="utf-8") as f:
+            with open(lock_file, "w", encoding="utf-8") as f:
                 json.dump(locks, f, indent=2)
     except Exception:
         pass

@@ -1,5 +1,5 @@
 """
-Comprehensive test suite for Git-Oops v1.2.0 (Sovereign AI Governance & Anti-Slop Runtime)
+Comprehensive test suite for Git-Oops v1.2.1 (Sovereign AI Governance & Anti-Slop Runtime)
 Covers:
 1. L8 Human Affirmation Gate & Agent Context Detection
 2. Version Churn & Panic-Bumping Circuit Breaker
@@ -93,7 +93,7 @@ def test_release_velocity_circuit_breaker():
     ok1, _ = check_release_velocity(max_releases_per_window=1, window_seconds=3600)
     assert ok1 is True
 
-    record_release_tag("v1.2.0")
+    record_release_tag("v1.2.1")
     ok2, msg2 = check_release_velocity(max_releases_per_window=1, window_seconds=3600)
     assert ok2 is False
     assert "VERSION CHURN DETECTED" in msg2

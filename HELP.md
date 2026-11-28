@@ -222,8 +222,8 @@ Standard linters check formatting and known syntax errors on static code, but th
 4. Don't provide an isolated shadow workspace or multi-agent concurrency mutex locks.
 `git-oops` is an active **runtime safety harness and autonomous supervisor** specifically built for the era of AI coding agents.
 
-### Q13: What new features and flags are available in v1.2.0 (The Eight Pillars Edition)?
-v1.2.0 establishes the complete L1 to L8 defense continuum (from terminal crash interception to cognitive anti-slop and human operator sanity guards), background silent self-upgrading, top-level `git_oops` namespace, and enterprise commands:
+### Q13: What new features and flags are available in v1.2.1 (The Eight Pillars Edition)?
+v1.2.1 establishes the complete L1 to L8 defense continuum (from terminal crash interception to cognitive anti-slop and human operator sanity guards), background silent self-upgrading, top-level `git_oops` namespace, and enterprise commands:
 - **`python -m git_oops`** or **`git-oops`**: Runs anywhere with zero Windows Smart App Control unsigned binary warnings.
 - **`git-oops --hud`**: Launches the Obsidian Glassmorphism Web HUD (`http://localhost:8443`) for real-time telemetry (L8 full defense).
 - **`git-oops --pre-commit`**: Executes the sub-second pre-flight checks (L1-L8 local gatekeeper).

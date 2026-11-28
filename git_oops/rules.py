@@ -24,7 +24,7 @@ SYNC_INTERVAL_SECONDS = 86400
 
 # Built-in offline baseline rules (Hardened fallback - zero network required)
 OFFLINE_BASELINE_RULES: Dict[str, Any] = {
-    "version": "1.2.0-baseline",
+    "version": "1.2.1-baseline",
     "last_updated": 1731550000,
     "secret_patterns": [
         {"pattern": r"(?i)(?:api[_-]?key|secret|password|passwd|auth[_-]?token)\s*[:=]\s*['\"]([a-zA-Z0-9_\-\.]{16,})['\"]", "label": "Exposed Secret Literal", "severity": "CRITICAL"},
@@ -212,7 +212,7 @@ def fetch_remote_rules(timeout: float = 2.0) -> Tuple[bool, Dict[str, Any]]:
     """
     for url in OTA_FEED_URLS:
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "git-oops-ota-client/1.2.0"})
+            req = urllib.request.Request(url, headers={"User-Agent": "git-oops-ota-client/1.2.1"})
             with urllib.request.urlopen(req, timeout=timeout) as response:
                 if response.status != 200:
                     continue
@@ -253,7 +253,7 @@ def sync_security_rules_foreground(force: bool = False) -> Tuple[bool, str]:
 
     current_rules["malicious_packages"] = merged_pkgs
     current_rules["secret_patterns"] = list(curr_patterns.values())
-    current_rules["version"] = remote_rules.get("version", "1.2.0-ota")
+    current_rules["version"] = remote_rules.get("version", "1.2.1-ota")
     current_rules["last_updated"] = int(time.time())
 
     save_security_rules(current_rules)
